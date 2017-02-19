@@ -1,0 +1,1 @@
+/usr/bin/c++   -Wshadow -Wswitch-default -Wswitch-enum -Wundef -Wuninitialized -Wpointer-arith -Wcast-align -Wformat=2 -Wredundant-decls -Wformat-security  -Werror -fexceptions -frtti   CMakeFiles/slocum_pi_tests.dir/test_array_utils.o  -o slocum_pi_tests -rdynamic -lgtest -lgtest_main -lpthread 
