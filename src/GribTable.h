@@ -35,7 +35,7 @@
 #include <wx/grid.h>
 
 #include "GribUIDialogBase.h"
-#include "slocum_pi.h"
+#include "ensemble_weather_pi.h"
 #include "ocpn_plugin.h"
 
 class GRIBUICtrlBar;

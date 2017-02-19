@@ -25,8 +25,8 @@
  *
  */
 
+#include "ensemble_weather_pi.h"
 #include "folder.xpm"
-#include "slocum_pi.h"
 
 static const wxString units0_names[] = {_("Knots"), _("m/s"), _("mph"), _("km/h"), _("Beaufort"), wxEmptyString};
 static const wxString units1_names[] = {_("MilliBars"), _("mmHG"), _("inHG"), wxEmptyString};

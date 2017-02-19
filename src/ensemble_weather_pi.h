@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Project:  OpenCPN
- * Purpose:  SLOCUM Plugin
+ * Purpose:  Ensemble WEather Plugin
  * Author:   David Register / Alex Kleeman
  *
  ***************************************************************************
@@ -62,11 +62,11 @@
 #define SEPARATED_HORIZONTAL   2          // dialog separated shown honrizontaly
 #define SEPARATED_VERTICAL     3          // dialog separated shown vaerticaly
 
-class slocum_pi : public opencpn_plugin_112
+class ensemble_weather_pi : public opencpn_plugin_112
 {
 public:
-      slocum_pi(void *ppimgr);
-      ~slocum_pi(void);
+      ensemble_weather_pi(void *ppimgr);
+      ~ensemble_weather_pi(void);
 
 //    The required PlugIn Methods
       int Init(void);

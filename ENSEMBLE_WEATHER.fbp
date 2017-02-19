@@ -15,7 +15,7 @@
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
         <property name="internationalize">1</property>
-        <property name="name">slocum_pi</property>
+        <property name="name">ensemble_weather_pi</property>
         <property name="namespace"></property>
         <property name="path">./src</property>
         <property name="precompiled_header"></property>

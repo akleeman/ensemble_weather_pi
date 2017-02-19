@@ -1,7 +1,7 @@
 /******************************************************************************
  *
  * Project:  OpenCPN
- * Purpose:  SLOCUM Plugin
+ * Purpose:  Ensemble Weather Plugin
  * Author:   David Register / Alex Kleeman
  *
  ***************************************************************************
@@ -37,7 +37,7 @@
 #include <wx/fileconf.h>
 #include <wx/stdpaths.h>
 
-#include "slocum_pi.h"
+#include "ensemble_weather_pi.h"
 
 #ifdef __WXQT__
 //#include "qdebug.h"
@@ -47,7 +47,7 @@
 
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
 {
-    return new slocum_pi(ppimgr);
+    return new ensemble_weather_pi(ppimgr);
 }
 
 extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
@@ -72,7 +72,7 @@ extern int   m_DialogStyle;
 //
 //---------------------------------------------------------------------------------------------------------
 
-slocum_pi::slocum_pi(void *ppimgr)
+ensemble_weather_pi::ensemble_weather_pi(void *ppimgr)
     :opencpn_plugin_112(ppimgr)
 {
       // Create the PlugIn icons
@@ -81,16 +81,16 @@ slocum_pi::slocum_pi(void *ppimgr)
       m_bShowGrib = false;
 }
 
-slocum_pi::~slocum_pi(void)
+ensemble_weather_pi::~ensemble_weather_pi(void)
 {
-      delete _img_slocum_pi;
-      delete _img_slocum;
+      delete _img_ensemble_weather_pi;
+      delete _img_ensemble_weather;
       delete m_pLastTimelineSet;
 }
 
-int slocum_pi::Init(void)
+int ensemble_weather_pi::Init(void)
 {
-      AddLocaleCatalog( _T("opencpn-slocum_pi") );
+      AddLocaleCatalog( _T("opencpn-ensemble_weather_pi") );
 
       // Set some default private member parameters
       m_CtrlBarxy = wxPoint(0, 0);
@@ -116,7 +116,7 @@ int slocum_pi::Init(void)
 	  if (m_bGRIBShowIcon) {
 		  wxString shareLocn = *GetpSharedDataLocation() +
 			  _T("plugins") + wxFileName::GetPathSeparator() +
-			  _T("slocum_pi") + wxFileName::GetPathSeparator()
+			  _T("ensemble_weather_pi") + wxFileName::GetPathSeparator()
 			  + _T("data") + wxFileName::GetPathSeparator();
 
 		  wxString normalIcon = shareLocn + _T("grib.svg");
@@ -153,7 +153,7 @@ int slocum_pi::Init(void)
             );
 }
 
-bool slocum_pi::DeInit(void)
+bool ensemble_weather_pi::DeInit(void)
 {
     if(m_pGribCtrlBar) {
         m_pGribCtrlBar->Close();
@@ -167,68 +167,68 @@ bool slocum_pi::DeInit(void)
     return true;
 }
 
-int slocum_pi::GetAPIVersionMajor()
+int ensemble_weather_pi::GetAPIVersionMajor()
 {
       return MY_API_VERSION_MAJOR;
 }
 
-int slocum_pi::GetAPIVersionMinor()
+int ensemble_weather_pi::GetAPIVersionMinor()
 {
       return MY_API_VERSION_MINOR;
 }
 
-int slocum_pi::GetPlugInVersionMajor()
+int ensemble_weather_pi::GetPlugInVersionMajor()
 {
       return PLUGIN_VERSION_MAJOR;
 }
 
-int slocum_pi::GetPlugInVersionMinor()
+int ensemble_weather_pi::GetPlugInVersionMinor()
 {
       return PLUGIN_VERSION_MINOR;
 }
 
-wxBitmap *slocum_pi::GetPlugInBitmap()
+wxBitmap *ensemble_weather_pi::GetPlugInBitmap()
 {
-      return _img_slocum_pi;
+      return _img_ensemble_weather_pi;
 }
 
-wxString slocum_pi::GetCommonName()
+wxString ensemble_weather_pi::GetCommonName()
 {
-      return _T("SLOCUM");
-}
-
-
-wxString slocum_pi::GetShortDescription()
-{
-      return _("Slocum PlugIn for OpenCPN");
+      return _T("Ensemble Weather");
 }
 
 
-wxString slocum_pi::GetLongDescription()
+wxString ensemble_weather_pi::GetShortDescription()
 {
-      return _("Slocum PlugIn for OpenCPN\n\
+      return _("Ensemble Weather PlugIn for OpenCPN");
+}
+
+
+wxString ensemble_weather_pi::GetLongDescription()
+{
+      return _("Ensemble Weather PlugIn for OpenCPN\n\
 Provides ensemble forecast overlays." );
 }
 
 \
-void slocum_pi::SetDefaults(void)
+void ensemble_weather_pi::SetDefaults(void)
 {
 }
 
 
-int slocum_pi::GetToolBarToolCount(void)
+int ensemble_weather_pi::GetToolBarToolCount(void)
 {
       return 1;
 }
 
-bool slocum_pi::MouseEventHook( wxMouseEvent &event )
+bool ensemble_weather_pi::MouseEventHook( wxMouseEvent &event )
 {
     if( (m_pGribCtrlBar && m_pGribCtrlBar->pReq_Dialog) )
         return m_pGribCtrlBar->pReq_Dialog->MouseEventHook( event );
     return false;
 }
 
-void slocum_pi::ShowPreferencesDialog( wxWindow* parent )
+void ensemble_weather_pi::ShowPreferencesDialog( wxWindow* parent )
 {
     GribPreferencesDialog *Pref = new GribPreferencesDialog(parent);
 
@@ -299,7 +299,7 @@ void slocum_pi::ShowPreferencesDialog( wxWindow* parent )
      delete Pref;
 }
 
-bool slocum_pi::QualifyCtrlBarPosition( wxPoint position, wxSize size )
+bool ensemble_weather_pi::QualifyCtrlBarPosition( wxPoint position, wxSize size )
 {   // Make sure drag bar (title bar) or grabber always screen
     bool b_reset_pos = false;
 #ifdef __WXMSW__
@@ -330,7 +330,7 @@ bool slocum_pi::QualifyCtrlBarPosition( wxPoint position, wxSize size )
     return !b_reset_pos;
 }
 
-void slocum_pi::MoveDialog(wxDialog *dialog, wxPoint position)
+void ensemble_weather_pi::MoveDialog(wxDialog *dialog, wxPoint position)
 {
 	wxPoint p = GetOCPNCanvasWindow()->ScreenToClient(position);
     //Check and ensure there is always a "grabb" zone always visible wathever the dialoue size is.
@@ -345,7 +345,7 @@ void slocum_pi::MoveDialog(wxDialog *dialog, wxPoint position)
 	dialog->Move(GetOCPNCanvasWindow()->ClientToScreen(p));
 }
 
-void slocum_pi::OnToolbarToolCallback(int id)
+void ensemble_weather_pi::OnToolbarToolCallback(int id)
 {
     if( !::wxIsBusy() ) ::wxBeginBusyCursor();
 
@@ -416,7 +416,7 @@ void slocum_pi::OnToolbarToolCallback(int id)
        m_pGribCtrlBar->Close();
 }
 
-void slocum_pi::OnGribCtrlBarClose()
+void ensemble_weather_pi::OnGribCtrlBarClose()
 {
     m_bShowGrib = false;
     SetToolbarItemState( m_leftclick_tool_id, m_bShowGrib );
@@ -442,7 +442,7 @@ void slocum_pi::OnGribCtrlBarClose()
     }
 }
 
-bool slocum_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
+bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
     if(!m_pGribCtrlBar ||
        !m_pGribCtrlBar->IsShown() ||
@@ -457,7 +457,7 @@ bool slocum_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
     return true;
 }
 
-bool slocum_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
+bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
     if(!m_pGribCtrlBar ||
        !m_pGribCtrlBar->IsShown() ||
@@ -477,19 +477,19 @@ bool slocum_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
     return true;
 }
 
-void slocum_pi::SetCursorLatLon(double lat, double lon)
+void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
 {
     if(m_pGribCtrlBar && m_pGribCtrlBar->IsShown())
         m_pGribCtrlBar->SetCursorLatLon(lat, lon);
 }
 
-void slocum_pi::OnContextMenuItemCallback(int id)
+void ensemble_weather_pi::OnContextMenuItemCallback(int id)
 {
     if(!m_pGribCtrlBar->m_bGRIBActiveFile) return;
     m_pGribCtrlBar->ContextMenuItemCallback(id);
 }
 
-void slocum_pi::SetDialogFont( wxWindow *dialog, wxFont *font)
+void ensemble_weather_pi::SetDialogFont( wxWindow *dialog, wxFont *font)
 {
     dialog->SetFont( *font );
     wxWindowList list = dialog->GetChildren();
@@ -503,7 +503,7 @@ void slocum_pi::SetDialogFont( wxWindow *dialog, wxFont *font)
     dialog->Refresh();
 }
 
-void slocum_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
+void ensemble_weather_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
 {
     if(message_id == _T("GRIB_VERSION_REQUEST"))
     {
@@ -567,7 +567,7 @@ void slocum_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
     }
 }
 
-bool slocum_pi::LoadConfig(void)
+bool ensemble_weather_pi::LoadConfig(void)
 {
     wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
 
@@ -598,7 +598,7 @@ bool slocum_pi::LoadConfig(void)
     return true;
 }
 
-bool slocum_pi::SaveConfig(void)
+bool ensemble_weather_pi::SaveConfig(void)
 {
     wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
 
@@ -626,7 +626,7 @@ bool slocum_pi::SaveConfig(void)
     return true;
 }
 
-void slocum_pi::SetColorScheme(PI_ColorScheme cs)
+void ensemble_weather_pi::SetColorScheme(PI_ColorScheme cs)
 {
     DimeWindow(m_pGribCtrlBar);
     if( m_pGribCtrlBar ) {
@@ -637,7 +637,7 @@ void slocum_pi::SetColorScheme(PI_ColorScheme cs)
     }
 }
 
-void slocum_pi::SendTimelineMessage(wxDateTime time)
+void ensemble_weather_pi::SendTimelineMessage(wxDateTime time)
 {
     if(!m_pGribCtrlBar)
         return;

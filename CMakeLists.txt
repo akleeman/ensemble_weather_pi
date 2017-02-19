@@ -38,9 +38,6 @@ MESSAGE (STATUS "*** Staging to build ${PACKAGE_NAME} ***")
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
 
-# require proper c++
-#ADD_DEFINITIONS( "-Wall -ansi -pedantic -Wno-variadic-macros" )
-#TODO: Should we use  -fno-stack-protector
 #  IF NOT DEBUGGING CFLAGS="-O2 -march=native"
 IF(NOT WIN32 AND NOT APPLE)
     ADD_DEFINITIONS( "-Wall -fexceptions -fvisibility=hidden" )
@@ -80,9 +77,9 @@ FIND_PACKAGE(Gettext REQUIRED)
 # header files and cpp/c files and CMake will sort them out
 
 
-SET(SRC_GRIB
-            src/slocum_pi.h
-            src/slocum_pi.cpp
+SET(SRC_ENSEMBLE_WEATHER
+            src/grib_pi.h
+            src/grib_pi.cpp
             src/GribOverlayFactory.cpp
             src/GribOverlayFactory.h
             src/GribUIDialogBase.cpp
@@ -278,8 +275,6 @@ IF(WIN32)
     ENDIF(EXISTS ${PROJECT_SOURCE_DIR}/data)
 
 ENDIF(WIN32)
-
-add_subdirectory(third_party/googletest)
 
 INCLUDE("../PluginLocalization.cmake")
 PLUGIN_LOCALIZATION()

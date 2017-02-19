@@ -9,7 +9,7 @@
 
 extern void initialize_images(void);
 
-extern wxBitmap *_img_slocum_pi;
-extern wxBitmap *_img_slocum;
+extern wxBitmap *_img_ensemble_weather_pi;
+extern wxBitmap *_img_ensemble_weather;
 
 #endif /* ICONS_H */

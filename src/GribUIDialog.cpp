@@ -47,7 +47,8 @@
 #include "folder.xpm"
 #include "GribUIDialog.h"
 #include <wx/arrimpl.cpp>
-#include "slocum_pi.h"
+
+#include "ensemble_weather_pi.h"
 
 //general variables
 double  m_cursor_lat, m_cursor_lon;
@@ -191,7 +192,7 @@ void GribTimelineRecordSet::ClearCachedData()
 //          GRIB CtrlBar Implementation
 //---------------------------------------------------------------------------------------
 
-GRIBUICtrlBar::GRIBUICtrlBar(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ,slocum_pi *ppi )
+GRIBUICtrlBar::GRIBUICtrlBar(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ,ensemble_weather_pi *ppi )
     : GRIBUICtrlBarBase(parent, id, title, pos, size, style )
 {
     pParent = parent;

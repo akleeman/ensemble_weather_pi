@@ -60,7 +60,7 @@ class GribGrabberWin;
 class GribSpacerWin;
 
 class wxFileConfig;
-class slocum_pi;
+class ensemble_weather_pi;
 class wxGraphicsContext;
 
 WX_DECLARE_OBJARRAY( GribRecordSet, ArrayOfGribRecordSets );
@@ -86,7 +86,7 @@ public:
 class GRIBUICtrlBar: public GRIBUICtrlBarBase {
 public:
 
-    GRIBUICtrlBar(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ,slocum_pi *ppi );
+    GRIBUICtrlBar(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ,ensemble_weather_pi *ppi );
     ~GRIBUICtrlBar();
 
     void OpenFile( bool newestFile = false );
@@ -121,7 +121,7 @@ public:
 	GribTimelineRecordSet *m_pTimelineSet;
 
     wxTimer         m_tPlayStop;
-    slocum_pi         *pPlugIn;
+    ensemble_weather_pi         *pPlugIn;
     GribRequestSetting  *pReq_Dialog;
     GRIBFile        *m_bGRIBActiveFile;
 	bool            m_bDataPlot[GribOverlaySettings::GEO_ALTITUDE];  //only for no altitude parameters

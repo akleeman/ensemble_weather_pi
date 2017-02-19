@@ -24,8 +24,8 @@
  ***************************************************************************
  *
  */
+#include "ensemble_weather_pi.h"
 #include "folder.xpm"
-#include "slocum_pi.h"
 
 extern int m_Altitude;
 extern double m_cursor_lat, m_cursor_lon;
