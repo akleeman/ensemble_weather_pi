@@ -1,4 +1,0 @@
-/home/kleeman/dev/OpenCPN/plugins/slocum_pi/tests/CMakeFiles/test.dir
-/home/kleeman/dev/OpenCPN/plugins/slocum_pi/tests/CMakeFiles/edit_cache.dir
-/home/kleeman/dev/OpenCPN/plugins/slocum_pi/tests/CMakeFiles/rebuild_cache.dir
-/home/kleeman/dev/OpenCPN/plugins/slocum_pi/tests/CMakeFiles/slocum_pi_tests.dir
