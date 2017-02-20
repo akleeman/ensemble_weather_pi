@@ -36,8 +36,8 @@ src/SwitchPlanDialog.cpp
 src/SwitchPlanDialog.h
 src/Utilities.cpp
 src/Utilities.h
-src/weather_routing_pi.cpp
-src/weather_routing_pi.h
+src/ensemble_weather_pi.cpp
+src/ensemble_weather_pi.h
 src/WeatherRouting.cpp
 src/WeatherRouting.h
 src/WeatherRoutingUI.cpp

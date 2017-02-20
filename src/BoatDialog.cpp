@@ -30,7 +30,7 @@
 #include <math.h>
 #include <time.h>
 
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 #include "Utilities.h"
 #include "Boat.h"
 #include "BoatDialog.h"
@@ -642,7 +642,7 @@ void BoatDialog::OnOpenBoat ( wxCommandEvent& event )
     pConf->SetPath ( _T( "/PlugIns/WeatherRouting/BoatDialog" ) );
 
     wxString path;
-    pConf->Read ( _T ( "Path" ), &path, weather_routing_pi::StandardPath());
+    pConf->Read ( _T ( "Path" ), &path, ensemble_weather_pi::StandardPath());
 
     wxFileDialog openDialog
         ( this, _( "Select Boat" ), path, wxT ( "" ),
@@ -681,7 +681,7 @@ void BoatDialog::SaveBoat()
         pConf->SetPath ( _T( "/PlugIns/WeatherRouting/BoatDialog" ) );
 
         wxString path;
-        pConf->Read ( _T ( "Path" ), &path, weather_routing_pi::StandardPath());
+        pConf->Read ( _T ( "Path" ), &path, ensemble_weather_pi::StandardPath());
 
         wxFileDialog saveDialog( this, _( "Select Boat" ), path, wxT ( "" ),
                                  wxT ( "Boat files (*.xml)|*.XML;*.xml|All files (*.*)|*.*" ),
@@ -735,7 +735,7 @@ void BoatDialog::OnSaveFile ( wxCommandEvent& event )
     pConf->SetPath ( _T( "/PlugIns/WeatherRouting/BoatDialog" ) );
 
     wxString path;
-    pConf->Read ( _T ( "FilePath" ), &path, weather_routing_pi::StandardPath());
+    pConf->Read ( _T ( "FilePath" ), &path, ensemble_weather_pi::StandardPath());
 
     wxFileDialog saveDialog( this, _( "Select Polar" ), path, wxT ( "" ),
                              wxT ( "Boat Polar files (*.file)|*.FILE;*.file|All files (*.*)|*.*" ), wxFD_SAVE  );
@@ -854,7 +854,7 @@ void BoatDialog::OnAddPolar( wxCommandEvent& event )
 
     wxString path;
     pConf->Read ( _T ( "FilePath" ), &path, *GetpSharedDataLocation()
-                  + _T("plugins/weather_routing_pi/data/polars"));
+                  + _T("plugins/ensemble_weather_pi/data/polars"));
     path = wxFileName(path).GetPath();
 
     wxFileDialog openDialog
@@ -1006,12 +1006,12 @@ void BoatDialog::RepopulatePolars()
     if(m_Boat.Polars.size() == 0) {
         Polar generic_polar;
         wxString message, generic_polar_path = *GetpSharedDataLocation()
-            + _T("plugins/weather_routing_pi/data/polars/60ft_mono.pol");
+            + _T("plugins/ensemble_weather_pi/data/polars/60ft_mono.pol");
         bool success = generic_polar.Open(generic_polar_path, message);
         if(success)
             m_Boat.Polars.push_back(generic_polar);
         if(message.size())
-            wxLogMessage(wxT("weather_routing_pi: ") + wxString(success ? _T("warning") : _T("error")) +
+            wxLogMessage(wxT("ensemble_weather_pi: ") + wxString(success ? _T("warning") : _T("error")) +
                          _T(" loading generic polar \"") + generic_polar_path + _T("\""));
     }
 #endif

@@ -15,7 +15,7 @@
         <property name="first_id">1000</property>
         <property name="help_provider">none</property>
         <property name="internationalize">1</property>
-        <property name="name">weather_routing_pi</property>
+        <property name="name">ensemble_weather_pi</property>
         <property name="namespace"></property>
         <property name="path">./src</property>
         <property name="precompiled_header"></property>
@@ -12232,7 +12232,7 @@
                         <property name="gripper">0</property>
                         <property name="hidden">0</property>
                         <property name="id">wxID_ANY</property>
-                        <property name="label">The weather routing plugin for opencpn is intended to calculate sailing routes based on computerized weather data and boat sailing ability.&#x0A;&#x0A;License: GPLv3+&#x0A;&#x0A;Source Code:&#x0A;https://github.com/seandepagnier/weather_routing_pi&#x0A;&#x0A;Author:&#x0A;Sean D&apos;Epagnier&#x0A;&#x0A;Many thanks to all of the translators and testers.</property>
+                        <property name="label">The weather routing plugin for opencpn is intended to calculate sailing routes based on computerized weather data and boat sailing ability.&#x0A;&#x0A;License: GPLv3+&#x0A;&#x0A;Source Code:&#x0A;https://github.com/seandepagnier/ensemble_weather_pi&#x0A;&#x0A;Author:&#x0A;Sean D&apos;Epagnier&#x0A;&#x0A;Many thanks to all of the translators and testers.</property>
                         <property name="max_size"></property>
                         <property name="maximize_button">0</property>
                         <property name="maximum_size"></property>

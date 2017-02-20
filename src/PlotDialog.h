@@ -32,7 +32,7 @@
 
 #include "WeatherRoutingUI.h"
 
-class weather_routing_pi;
+class ensemble_weather_pi;
 class WeatherRouting;
 
 class PlotDialog : public PlotDialogBase

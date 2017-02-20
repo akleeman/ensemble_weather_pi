@@ -33,7 +33,7 @@
 #include "WeatherRoutingUI.h"
 
 class WeatherRouting;
-class weather_routing_pi;
+class ensemble_weather_pi;
 
 class ConfigurationDialog : public ConfigurationDialogBase
 {

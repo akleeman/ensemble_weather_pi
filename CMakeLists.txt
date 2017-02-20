@@ -1,5 +1,5 @@
 ##---------------------------------------------------------------------------
-## Author:      Sean D'Epagnier
+## Author:      Alex Kleeman (template borrowed from Sean D'Epagnier)
 ## Copyright:
 ## License:     GPLv3+
 ##---------------------------------------------------------------------------
@@ -9,11 +9,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 cmake_policy(SET CMP0012 NEW)
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
-PROJECT(weather_routing_pi)
-SET(PACKAGE_NAME weather_routing_pi)
-SET(VERBOSE_NAME Weather_routing)
-SET(TITLE_NAME WEATHER_ROUTING)
-SET(CPACK_PACKAGE_CONTACT "Sean D'Epagnier ")
+PROJECT(ensemble_weather_pi)
+SET(PACKAGE_NAME ensemble_weather_pi)
+SET(VERBOSE_NAME Ensemble_Weather)
+SET(TITLE_NAME ENSEMBLE_WEATHER)
+SET(CPACK_PACKAGE_CONTACT "Alex Kleeman")
 
 SET(BUNDLE_DATA TRUE)
 
@@ -23,8 +23,8 @@ SET(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VER
 
 INCLUDE("cmake/PluginConfigure.cmake")
 
-SET(SRC_WEATHER_ROUTING
-            src/weather_routing_pi.cpp
+SET(SRC_ENSEMBLE_WEATHER
+            src/ensemble_weather_pi.cpp
             src/WeatherRouting.cpp
             src/ConfigurationDialog.cpp
             src/SettingsDialog.cpp
@@ -75,7 +75,7 @@ IF(UNIX)
  FIND_PACKAGE(TinyXML QUIET)
 ENDIF(UNIX)
 
-SET(SRC ${SRC_WEATHER_ROUTING} ${SRC_JSON} ${SRC_LIBTESS2})
+SET(SRC ${SRC_ENSEMBLE_WEATHER} ${SRC_JSON} ${SRC_LIBTESS2})
 
 IF(TINYXML_FOUND)
  message (STATUS "Building with system tinyxml")

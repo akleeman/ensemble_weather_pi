@@ -32,7 +32,7 @@
 #include "Boat.h"
 #include "RouteMapOverlay.h"
 #include "WeatherRouting.h"
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 
 // Define minimum and maximum versions of the grib plugin supported
 #define GRIB_MAX_MAJOR 4
@@ -52,7 +52,7 @@ static bool ODVersionNewerThan(int major, int minor, int patch)
     wxJSONValue jMsg;
     wxJSONWriter writer;
     wxString    MsgString;
-    jMsg[wxS("Source")] = wxS("WEATHER_ROUTING_PI");
+    jMsg[wxS("Source")] = wxS("ENSEMBLE_WEATHER_PI");
     jMsg[wxT("Type")] = wxT("Request");
     jMsg[wxT("Msg")] = wxS("Version");
     jMsg[wxT("MsgId")] = wxS("version");
@@ -73,7 +73,7 @@ static bool ODVersionNewerThan(int major, int minor, int patch)
 
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
 {
-    return new weather_routing_pi(ppimgr);
+    return new ensemble_weather_pi(ppimgr);
 }
 
 extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
@@ -83,24 +83,24 @@ extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
 
 #include "icons.h"
 
-weather_routing_pi::weather_routing_pi(void *ppimgr)
+ensemble_weather_pi::ensemble_weather_pi(void *ppimgr)
       :opencpn_plugin_110(ppimgr)
 {
       // Create the PlugIn icons
       initialize_images();
 
       m_tCursorLatLon.Connect(wxEVT_TIMER, wxTimerEventHandler
-                              ( weather_routing_pi::OnCursorLatLonTimer ), NULL, this);
+                              ( ensemble_weather_pi::OnCursorLatLonTimer ), NULL, this);
 }
 
-weather_routing_pi::~weather_routing_pi(void)
+ensemble_weather_pi::~ensemble_weather_pi(void)
 {
       delete _img_WeatherRouting;
 }
 
-int weather_routing_pi::Init(void)
+int ensemble_weather_pi::Init(void)
 {
-      AddLocaleCatalog( _T("opencpn-weather_routing_pi") );
+      AddLocaleCatalog( _T("opencpn-ensemble_weather_pi") );
 
       //    Get a pointer to the opencpn configuration object
       m_pconfig = GetOCPNConfigObject();
@@ -112,12 +112,12 @@ int weather_routing_pi::Init(void)
 
       m_leftclick_tool_id  = InsertPlugInTool
           (_T(""), _img_WeatherRouting, _img_WeatherRouting, wxITEM_CHECK,
-           _("Weather_Routing"), _T(""), NULL,
-           WEATHER_ROUTING_TOOL_POSITION, 0, this);
+           _("Ensemble_Weather"), _T(""), NULL,
+           ENSEMBLE_WEATHER_TOOL_POSITION, 0, this);
 
       wxMenu dummy_menu;
       m_position_menu_id = AddCanvasContextMenuItem
-          (new wxMenuItem(&dummy_menu, -1, _("Weather Route Position")), this );
+          (new wxMenuItem(&dummy_menu, -1, _("Ensemble Weather Position")), this );
       SetCanvasContextMenuItemViz(m_position_menu_id, false);
 
       //    And load the configuration items
@@ -133,7 +133,7 @@ int weather_routing_pi::Init(void)
             );
 }
 
-bool weather_routing_pi::DeInit(void)
+bool ensemble_weather_pi::DeInit(void)
 {
     if(m_pWeather_Routing)
         m_pWeather_Routing->Close();
@@ -144,60 +144,60 @@ bool weather_routing_pi::DeInit(void)
     return true;
 }
 
-int weather_routing_pi::GetAPIVersionMajor()
+int ensemble_weather_pi::GetAPIVersionMajor()
 {
       return MY_API_VERSION_MAJOR;
 }
 
-int weather_routing_pi::GetAPIVersionMinor()
+int ensemble_weather_pi::GetAPIVersionMinor()
 {
       return MY_API_VERSION_MINOR;
 }
 
-int weather_routing_pi::GetPlugInVersionMajor()
+int ensemble_weather_pi::GetPlugInVersionMajor()
 {
       return PLUGIN_VERSION_MAJOR;
 }
 
-int weather_routing_pi::GetPlugInVersionMinor()
+int ensemble_weather_pi::GetPlugInVersionMinor()
 {
       return PLUGIN_VERSION_MINOR;
 }
 
-wxBitmap *weather_routing_pi::GetPlugInBitmap()
+wxBitmap *ensemble_weather_pi::GetPlugInBitmap()
 {
     return new wxBitmap(_img_WeatherRouting->ConvertToImage().Copy());
 }
 
-wxString weather_routing_pi::GetCommonName()
+wxString ensemble_weather_pi::GetCommonName()
 {
-      return _("WeatherRouting");
+      return _("EnsembleWEather");
 }
 
-wxString weather_routing_pi::GetShortDescription()
+wxString ensemble_weather_pi::GetShortDescription()
 {
-    return _("Compute optimal routes based on weather and constraints.");
+    return _("Display multiple forecasts simultaneously.");
 }
 
-wxString weather_routing_pi::GetLongDescription()
+wxString ensemble_weather_pi::GetLongDescription()
 {
     return _("\
-Weather Routing features include:\n\
-  optimal routing subject to various constraints based on weather data\n\
-  automatic boat polar computation\n\
+Ensemble Weather proivdes a way of displaying multiple forecasts,\n\
+often from the same provider which gives a sense of how much you can\n\
+trust any given one.\
 ");
 }
 
-void weather_routing_pi::SetDefaults(void)
+void ensemble_weather_pi::SetDefaults(void)
 {
 }
 
-int weather_routing_pi::GetToolbarToolCount(void)
+int ensemble_weather_pi::GetToolbarToolCount(void)
 {
       return 1;
 }
 
-void weather_routing_pi::SetCursorLatLon(double lat, double lon)
+void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
 {
     if(m_pWeather_Routing && m_pWeather_Routing->FirstCurrentRouteMap() && !m_tCursorLatLon.IsRunning())
         m_tCursorLatLon.Start(50, true);
@@ -206,7 +206,7 @@ void weather_routing_pi::SetCursorLatLon(double lat, double lon)
     m_cursor_lon = lon;
 }
 
-void weather_routing_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
+void ensemble_weather_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
 {
     if(message_id == _T("GRIB_TIMELINE"))
     {
@@ -221,7 +221,6 @@ void weather_routing_pi::SetPluginMessage(wxString &message_id, wxString &messag
 
         if(m_pWeather_Routing) {
             m_pWeather_Routing->m_ConfigurationDialog.m_GribTimelineTime = time.ToUTC();
-//            m_pWeather_Routing->m_ConfigurationDialog.m_cbUseGrib->Enable();
             RequestRefresh(m_parent_window);
         }
     }
@@ -293,7 +292,7 @@ void weather_routing_pi::SetPluginMessage(wxString &message_id, wxString &messag
                                      _("Climatology plugin version not supported, no climatology data.")
                                      + _T("\n\n") +
                                      wxString::Format(_("Use versions %d.%d to %d.%d"), CLIMATOLOGY_MIN_MAJOR, CLIMATOLOGY_MIN_MINOR, CLIMATOLOGY_MAX_MAJOR, CLIMATOLOGY_MAX_MINOR),
-                                     _("Weather Routing"), wxOK | wxICON_WARNING);
+                                     _("Ensemble WEather"), wxOK | wxICON_WARNING);
                 mdlg.ShowModal();
                 return;
             }
@@ -317,7 +316,7 @@ void weather_routing_pi::SetPluginMessage(wxString &message_id, wxString &messag
     }
 
 
-    if(message_id == wxS("WEATHER_ROUTING_PI")) {
+    if(message_id == wxS("ENSEMBLE_WEATHER_PI")) {
         // construct the JSON root object
         wxJSONValue  root;
         // construct a JSON parser
@@ -326,7 +325,7 @@ void weather_routing_pi::SetPluginMessage(wxString &message_id, wxString &messag
         // check for errors before retreiving values...
         int numErrors = reader.Parse( message_body, &root );
         if ( numErrors > 0 ) {
-            wxLogMessage(_T("weather_routing_pi: Error parsing JSON message - "));
+            wxLogMessage(_T("ensemble_weather_pi: Error parsing JSON message - "));
             const wxArrayString& errors = reader.GetErrors();
             for(int i = 0; i < (int)errors.GetCount(); i++) {
                 wxLogMessage( errors.Item( i ) );
@@ -347,17 +346,17 @@ void weather_routing_pi::SetPluginMessage(wxString &message_id, wxString &messag
     }
 }
 
-void weather_routing_pi::SetPositionFixEx(PlugIn_Position_Fix_Ex &pfix)
+void ensemble_weather_pi::SetPositionFixEx(PlugIn_Position_Fix_Ex &pfix)
 {
     m_boat_lat = pfix.Lat;
     m_boat_lon = pfix.Lon;
 }
 
-void weather_routing_pi::ShowPreferencesDialog( wxWindow* parent )
+void ensemble_weather_pi::ShowPreferencesDialog( wxWindow* parent )
 {
 }
 
-void weather_routing_pi::OnToolbarToolCallback(int id)
+void ensemble_weather_pi::OnToolbarToolCallback(int id)
 {
     if(!m_pWeather_Routing) {
         m_pWeather_Routing = new WeatherRouting(m_parent_window, *this);
@@ -372,7 +371,7 @@ void weather_routing_pi::OnToolbarToolCallback(int id)
             wxJSONValue jMsg;
             wxJSONWriter writer;
             wxString MsgString;
-            jMsg[wxT("Source")] = wxT("WEATHER_ROUTING_PI");
+            jMsg[wxT("Source")] = wxT("ENSEMBLE_WEATHER_PI");
             jMsg[wxT("Type")] = wxT("Request");
             jMsg[wxT("Msg")] = wxS("GetAPIAddresses");
             jMsg[wxT("MsgId")] = wxS("GetAPIAddresses");
@@ -386,7 +385,7 @@ void weather_routing_pi::OnToolbarToolCallback(int id)
     m_pWeather_Routing->Show(!m_pWeather_Routing->IsShown());
 }
 
-void weather_routing_pi::OnContextMenuItemCallback(int id)
+void ensemble_weather_pi::OnContextMenuItemCallback(int id)
 {
     if(!m_pWeather_Routing)
         return;
@@ -397,7 +396,7 @@ void weather_routing_pi::OnContextMenuItemCallback(int id)
     m_pWeather_Routing->Reset();
 }
 
-bool weather_routing_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
+bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
     if(m_pWeather_Routing && m_pWeather_Routing->IsShown()) {
         wrDC wrdc(dc);
@@ -407,7 +406,7 @@ bool weather_routing_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
     return false;
 }
 
-bool weather_routing_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
+bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
     if(m_pWeather_Routing && m_pWeather_Routing->IsShown()) {
         wrDC wrdc;
@@ -417,7 +416,7 @@ bool weather_routing_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort 
     return false;
 }
 
-void weather_routing_pi::OnCursorLatLonTimer( wxTimerEvent & )
+void ensemble_weather_pi::OnCursorLatLonTimer( wxTimerEvent & )
 {
     std::list<RouteMapOverlay *>routemapoverlays = m_pWeather_Routing->CurrentRouteMaps();
     bool refresh = false;
@@ -434,7 +433,7 @@ void weather_routing_pi::OnCursorLatLonTimer( wxTimerEvent & )
     }
 }
 
-bool weather_routing_pi::LoadConfig(void)
+bool ensemble_weather_pi::LoadConfig(void)
 {
       wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
 
@@ -445,23 +444,23 @@ bool weather_routing_pi::LoadConfig(void)
       return true;
 }
 
-bool weather_routing_pi::SaveConfig(void)
+bool ensemble_weather_pi::SaveConfig(void)
 {
       wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
 
       if(!pConf)
           return false;
 
-      pConf->SetPath ( _T ( "/PlugIns/WeatherRouting" ) );
+      pConf->SetPath ( _T ( "/PlugIns/EnsembleWeather" ) );
       return true;
 }
 
-void weather_routing_pi::SetColorScheme(PI_ColorScheme cs)
+void ensemble_weather_pi::SetColorScheme(PI_ColorScheme cs)
 {
       DimeWindow(m_pWeather_Routing);
 }
 
-wxString weather_routing_pi::StandardPath()
+wxString ensemble_weather_pi::StandardPath()
 {
     wxStandardPathsBase& std_path = wxStandardPathsBase::Get();
     wxString s = wxFileName::GetPathSeparator();
@@ -475,20 +474,20 @@ wxString weather_routing_pi::StandardPath()
 
     return stdPath + wxFileName::GetPathSeparator() +
         _T("plugins") + wxFileName::GetPathSeparator() +
-        _T("weather_routing") +  wxFileName::GetPathSeparator();
+        _T("ensemble_weather") +  wxFileName::GetPathSeparator();
 
     stdPath += s + _T("plugins");
     if (!wxDirExists(stdPath))
       wxMkdir(stdPath);
 
-    stdPath += s + _T("weather_routing");
+    stdPath += s + _T("ensemble_weather");
 
 #ifdef __WXOSX__
     // Compatibility with pre-OCPN-4.2; move config dir to
     // ~/Library/Preferences/opencpn if it exists
     wxString oldPath = (std_path.GetUserConfigDir() + s + _T("plugins") + s + _T("weather_routing"));
     if (wxDirExists(oldPath) && !wxDirExists(stdPath)) {
-		wxLogMessage("weather_routing_pi: moving config dir %s to %s", oldPath, stdPath);
+		wxLogMessage("ensemble_weather_pi: moving config dir %s to %s", oldPath, stdPath);
 		wxRenameFile(oldPath, stdPath);
     }
 #endif
@@ -500,7 +499,7 @@ wxString weather_routing_pi::StandardPath()
     return stdPath;
 }
 
-void weather_routing_pi::ShowMenuItems(bool show)
+void ensemble_weather_pi::ShowMenuItems(bool show)
 {
     SetToolbarItemState( m_leftclick_tool_id, show );
     SetCanvasContextMenuItemViz(m_position_menu_id, show);

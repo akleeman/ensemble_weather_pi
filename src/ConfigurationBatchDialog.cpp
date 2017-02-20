@@ -1,10 +1,10 @@
 /***************************************************************************
  *
- * Project:  OpenCPN Weather Routing plugin
- * Author:   Sean D'Epagnier
+ * Project:  OpenCPN Ensemble Weather plugin
+ * Author:   Alex Kleeman
  *
  ***************************************************************************
- *   Copyright (C) 2015 by Sean D'Epagnier                                 *
+ *   Copyright (C) 2015 by Alex Kleeman                                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -35,7 +35,7 @@
 #include "Boat.h"
 #include "BoatDialog.h"
 #include "RouteMapOverlay.h"
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 #include "WeatherRouting.h"
 #include "ConfigurationBatchDialog.h"
 
@@ -247,7 +247,7 @@ void ConfigurationBatchDialog::OnDisconnectAll( wxCommandEvent& event )
 void ConfigurationBatchDialog::OnAddBoat( wxCommandEvent& event )
 {
     wxFileDialog openDialog
-        ( this, _( "Select Polar" ), weather_routing_pi::StandardPath(), wxT ( "" ),
+        ( this, _( "Select Polar" ), ensemble_weather_pi::StandardPath(), wxT ( "" ),
           wxT ( "XML Weather Routing files (*.xml)|*.XML;*.xml|All files (*.*)|*.*" ),
           wxFD_OPEN  );
 

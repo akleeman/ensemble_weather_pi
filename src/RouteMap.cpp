@@ -77,7 +77,7 @@
 #include "Utilities.h"
 #include "Boat.h"
 #include "RouteMap.h"
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 
 #include "georef.h"
 #include "wx/jsonreader.h"

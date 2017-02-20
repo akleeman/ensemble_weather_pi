@@ -28,7 +28,7 @@
 
 #include "tinyxml/tinyxml.h"
 
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 #include "Utilities.h"
 #include "Boat.h"
 
@@ -126,7 +126,7 @@ wxString Boat::SaveXML(wxString filename)
 
         e->SetAttribute("FileName", polar.FileName.mb_str());
         if(!polar.CrossOverRegion.Empty()) {
-            wxString ContoursPath = weather_routing_pi::StandardPath() +
+            wxString ContoursPath = ensemble_weather_pi::StandardPath() +
                 _T("contours") + wxFileName::GetPathSeparator();
             if (!wxDirExists(ContoursPath))
                 wxMkdir(ContoursPath);

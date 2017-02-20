@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Language: el\n"
-"X-Crowdin-File: /plugins/weather_routing_pi/po/weather_routing_pi.pot\n"
+"X-Crowdin-File: /plugins/ensemble_weather_pi/po/ensemble_weather_pi.pot\n"
 
 #: src/Boat.cpp:56
 msgid "Boat file does not exist."
@@ -227,8 +227,8 @@ msgstr "Ο μαζική επεξεργασία δημιουργεί πολλαπ
 
 #: src/ConfigurationBatchDialog.cpp:287 src/ConfigurationDialog.cpp:244
 #: src/ConfigurationDialog.cpp:357 src/ReportDialog.cpp:238
-#: src/SettingsDialog.cpp:173 src/weather_routing_pi.cpp:209
-#: src/weather_routing_pi.cpp:248 src/weather_routing_pi.cpp:256
+#: src/SettingsDialog.cpp:173 src/ensemble_weather_pi.cpp:209
+#: src/ensemble_weather_pi.cpp:248 src/ensemble_weather_pi.cpp:256
 #: src/WeatherRouting.cpp:256 src/WeatherRouting.cpp:503
 #: src/WeatherRouting.cpp:744 src/WeatherRouting.cpp:766
 #: src/WeatherRouting.cpp:963 src/WeatherRouting.cpp:1013
@@ -508,23 +508,23 @@ msgid "Specify conditions where we should change to a different plan.\n"
 msgstr "Καθορίσετε τις συνθήκες όπου πρέπει να αλλάξει σε ένα διαφορετικό σχέδιο. \n"
 "Αν αλλάξουν οι συνθήκες δραματικά, τότε το πρόγραμμα θα ξαναεξετάσει το αλλαγμένο σχέδιο αν χρειάζεται να αλλάξει και πάλι. Έτσι χρειάζεται να καθορίσετε κανόνες μόνο για το επόμενο κοντινό πλάνο."
 
-#: src/weather_routing_pi.cpp:82
-msgid "Weather_Routing"
+#: src/ensemble_weather_pi.cpp:82
+msgid "Ensemble_Weather"
 msgstr "Δρομολόγηση βάσει του καιρού"
 
-#: src/weather_routing_pi.cpp:87
+#: src/ensemble_weather_pi.cpp:87
 msgid "Weather Route Position"
 msgstr "Θέση του Weather Route"
 
-#: src/weather_routing_pi.cpp:141
+#: src/ensemble_weather_pi.cpp:141
 msgid "WeatherRouting"
 msgstr "Δρομολόγηση βάσει του καιρού"
 
-#: src/weather_routing_pi.cpp:146
+#: src/ensemble_weather_pi.cpp:146
 msgid "Compute optimal routes based on weather and constraints."
 msgstr "Υπολογίστε τις βέλτιστες διαδρομές με βάση τις καιρικές συνθήκες και περιορισμούς."
 
-#: src/weather_routing_pi.cpp:151
+#: src/ensemble_weather_pi.cpp:151
 msgid "Weather Routing features include:\n"
 "  optimal routing subject to various constraints based on weather data\n"
 "  automatic boat polar computation\n"
@@ -532,15 +532,15 @@ msgstr "Το Weather Routing παρέχει: \n"
 " τη βέλτιστη διαδρομή για τους περιορισμούς που βάζουν οι μετεωρολογικές προβλέψεις\n"
 " αυτόματο υπολογισμό των πολικών διαγραμμάτων του πλοίου\n"
 
-#: src/weather_routing_pi.cpp:208
+#: src/ensemble_weather_pi.cpp:208
 msgid "Grib plugin version not supported."
 msgstr "Δεν υποστηρίζεται αυτή η έκδοση του πρόσθετου Grib."
 
-#: src/weather_routing_pi.cpp:247
+#: src/ensemble_weather_pi.cpp:247
 msgid "Climatology plugin version not supported, no climatology data."
 msgstr "Η έκδοση αυτή του προσθέτου Κλιματολογίας δεν υποστηρίζεται. Όχι κλιματολογικά δεδομένα."
 
-#: src/weather_routing_pi.cpp:255
+#: src/ensemble_weather_pi.cpp:255
 msgid "Climatology plugin out of date, it must be upgraded or resulting routings may be incorrect.\n"
 msgstr "Η έκδοση αυτή του προσθέτου Κλιματολογίας είναι ξεπερασμένη. Πρέπει να ανανεωθεί αλλιώς οι προκύποτουσες δρομολογήσεις ίσως είναι λανθασμένες.\n"
 
@@ -1626,7 +1626,7 @@ msgid "The weather routing plugin for opencpn is intended to aid in planning sai
 "This also means to educate users about weather trends, to \"discover\" new cruising routes, and to avoid adverse conditions.\n\n"
 "License: GPLv3+\n\n"
 "Source Code:\n"
-"https://github.com/seandepagnier/weather_routing_pi\n\n"
+"https://github.com/seandepagnier/ensemble_weather_pi\n\n"
 "Author:\n"
 "Sean D'Epagnier\n\n"
 "Many thanks to all of the translators and testers."
@@ -1634,7 +1634,7 @@ msgstr "Το πρόσθετο weather routing του opencpn στοχεύει σ
 "Επίσης να εκπαιδεύσει τους χρήστες σχετικά με τις τάσεις του καιρού, να \"ανακαλύψουν\" νέες διαδρομές, και να αποφεύγουν τις δυσμενείς καταστάσεις.\n\n"
 "Άδεια χρήσης: GPLv3+\n\n"
 "Κώδικας:\n"
-"https://github.com/seandepagnier/weather_routing_pi \n\n"
+"https://github.com/seandepagnier/ensemble_weather_pi \n\n"
 "Author:\n"
 "Sean D'Epagnier\n\n"
 "Πολλές ευχαριστίες σε όλους τους μεταφραστές και δοκιμαστές."

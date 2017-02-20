@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Language: ca\n"
-"X-Crowdin-File: /plugins/weather_routing_pi/po/weather_routing_pi.pot\n"
+"X-Crowdin-File: /plugins/ensemble_weather_pi/po/ensemble_weather_pi.pot\n"
 
 #: src/Boat.cpp:56
 msgid "Boat file does not exist."
@@ -227,8 +227,8 @@ msgstr "El mode Bath genera múltiples configuracions basades en la configuraci�
 
 #: src/ConfigurationBatchDialog.cpp:287 src/ConfigurationDialog.cpp:244
 #: src/ConfigurationDialog.cpp:357 src/ReportDialog.cpp:238
-#: src/SettingsDialog.cpp:173 src/weather_routing_pi.cpp:209
-#: src/weather_routing_pi.cpp:248 src/weather_routing_pi.cpp:256
+#: src/SettingsDialog.cpp:173 src/ensemble_weather_pi.cpp:209
+#: src/ensemble_weather_pi.cpp:248 src/ensemble_weather_pi.cpp:256
 #: src/WeatherRouting.cpp:256 src/WeatherRouting.cpp:503
 #: src/WeatherRouting.cpp:744 src/WeatherRouting.cpp:766
 #: src/WeatherRouting.cpp:963 src/WeatherRouting.cpp:1013
@@ -508,23 +508,23 @@ msgid "Specify conditions where we should change to a different plan.\n"
 msgstr "Especifiqueu les condicions en les que cal canviar a un diferent pla.\n"
 "Si es produeix un canvi radical de condicions, llavors el programa mira el pla que acaba de canviar, i veu si cal canviar de nou, de manera que només cal especificar regles per al proper pla."
 
-#: src/weather_routing_pi.cpp:82
-msgid "Weather_Routing"
-msgstr "Weather_Routing"
+#: src/ensemble_weather_pi.cpp:82
+msgid "Ensemble_Weather"
+msgstr "Ensemble_Weather"
 
-#: src/weather_routing_pi.cpp:87
+#: src/ensemble_weather_pi.cpp:87
 msgid "Weather Route Position"
 msgstr "Posició de la Meteo-ruta"
 
-#: src/weather_routing_pi.cpp:141
+#: src/ensemble_weather_pi.cpp:141
 msgid "WeatherRouting"
 msgstr "WeatherRouting"
 
-#: src/weather_routing_pi.cpp:146
+#: src/ensemble_weather_pi.cpp:146
 msgid "Compute optimal routes based on weather and constraints."
 msgstr "Calcular rutes òptimes basades en la climatologia i les limitacions."
 
-#: src/weather_routing_pi.cpp:151
+#: src/ensemble_weather_pi.cpp:151
 msgid "Weather Routing features include:\n"
 "  optimal routing subject to various constraints based on weather data\n"
 "  automatic boat polar computation\n"
@@ -532,15 +532,15 @@ msgstr "Les característiques de Meteo-ruta inclouen:\n"
 "Prediccions òptimes en base a les dades meteorològiques\n"
 " Càlcul automàtic de les polars del vaixell\n"
 
-#: src/weather_routing_pi.cpp:208
+#: src/ensemble_weather_pi.cpp:208
 msgid "Grib plugin version not supported."
 msgstr "El connector Grib no és compatible."
 
-#: src/weather_routing_pi.cpp:247
+#: src/ensemble_weather_pi.cpp:247
 msgid "Climatology plugin version not supported, no climatology data."
 msgstr "La versió del connector de climatologia no és compatible, no hi ha dades climatològiques."
 
-#: src/weather_routing_pi.cpp:255
+#: src/ensemble_weather_pi.cpp:255
 msgid "Climatology plugin out of date, it must be upgraded or resulting routings may be incorrect.\n"
 msgstr "El connector de Climatologia ha expirat. Cal recarregar-lo o la ruta resultant serà incorrecta.\n"
 
@@ -1626,7 +1626,7 @@ msgid "The weather routing plugin for opencpn is intended to aid in planning sai
 "This also means to educate users about weather trends, to \"discover\" new cruising routes, and to avoid adverse conditions.\n\n"
 "License: GPLv3+\n\n"
 "Source Code:\n"
-"https://github.com/seandepagnier/weather_routing_pi\n\n"
+"https://github.com/seandepagnier/ensemble_weather_pi\n\n"
 "Author:\n"
 "Sean D'Epagnier\n\n"
 "Many thanks to all of the translators and testers."
@@ -1634,7 +1634,7 @@ msgstr "El complement Meteo-ruta (Weather Routing) per a OpenCPN té com a objec
 "Això també significa educar els usuaris sobre les tendències climàtiques, per \"descobrir\" noves rutes de creuer, i per evitar condicions adverses.\n\n"
 "Llicència: GPLv3+\n\n"
 "Codi Font:\n"
-"https://github.com/seandepagnier/weather_routing_pi\n\n"
+"https://github.com/seandepagnier/ensemble_weather_pi\n\n"
 "Autor:\n"
 "Sean d'Epagnier\n\n"
 "Moltes gràcies a tots els traductors i verificadors."

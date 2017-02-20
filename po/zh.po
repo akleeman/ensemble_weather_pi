@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Language: zh-TW\n"
-"X-Crowdin-File: /plugins/weather_routing_pi/po/weather_routing_pi.pot\n"
+"X-Crowdin-File: /plugins/ensemble_weather_pi/po/ensemble_weather_pi.pot\n"
 
 #: src/Boat.cpp:56
 msgid "Boat file does not exist."
@@ -223,8 +223,8 @@ msgstr ""
 
 #: src/ConfigurationBatchDialog.cpp:287 src/ConfigurationDialog.cpp:244
 #: src/ConfigurationDialog.cpp:357 src/ReportDialog.cpp:238
-#: src/SettingsDialog.cpp:173 src/weather_routing_pi.cpp:209
-#: src/weather_routing_pi.cpp:248 src/weather_routing_pi.cpp:256
+#: src/SettingsDialog.cpp:173 src/ensemble_weather_pi.cpp:209
+#: src/ensemble_weather_pi.cpp:248 src/ensemble_weather_pi.cpp:256
 #: src/WeatherRouting.cpp:256 src/WeatherRouting.cpp:503
 #: src/WeatherRouting.cpp:744 src/WeatherRouting.cpp:766
 #: src/WeatherRouting.cpp:963 src/WeatherRouting.cpp:1013
@@ -493,37 +493,37 @@ msgid "Specify conditions where we should change to a different plan.\n"
 "If conditions change dramatically, then the program will look at the plan we just changed to and see if it needs to change again, so there is only need to specify rules for the next closest plan."
 msgstr ""
 
-#: src/weather_routing_pi.cpp:82
-msgid "Weather_Routing"
+#: src/ensemble_weather_pi.cpp:82
+msgid "Ensemble_Weather"
 msgstr ""
 
-#: src/weather_routing_pi.cpp:87
+#: src/ensemble_weather_pi.cpp:87
 msgid "Weather Route Position"
 msgstr ""
 
-#: src/weather_routing_pi.cpp:141
+#: src/ensemble_weather_pi.cpp:141
 msgid "WeatherRouting"
 msgstr ""
 
-#: src/weather_routing_pi.cpp:146
+#: src/ensemble_weather_pi.cpp:146
 msgid "Compute optimal routes based on weather and constraints."
 msgstr ""
 
-#: src/weather_routing_pi.cpp:151
+#: src/ensemble_weather_pi.cpp:151
 msgid "Weather Routing features include:\n"
 "  optimal routing subject to various constraints based on weather data\n"
 "  automatic boat polar computation\n"
 msgstr ""
 
-#: src/weather_routing_pi.cpp:208
+#: src/ensemble_weather_pi.cpp:208
 msgid "Grib plugin version not supported."
 msgstr ""
 
-#: src/weather_routing_pi.cpp:247
+#: src/ensemble_weather_pi.cpp:247
 msgid "Climatology plugin version not supported, no climatology data."
 msgstr ""
 
-#: src/weather_routing_pi.cpp:255
+#: src/ensemble_weather_pi.cpp:255
 msgid "Climatology plugin out of date, it must be upgraded or resulting routings may be incorrect.\n"
 msgstr ""
 
@@ -1608,7 +1608,7 @@ msgid "The weather routing plugin for opencpn is intended to aid in planning sai
 "This also means to educate users about weather trends, to \"discover\" new cruising routes, and to avoid adverse conditions.\n\n"
 "License: GPLv3+\n\n"
 "Source Code:\n"
-"https://github.com/seandepagnier/weather_routing_pi\n\n"
+"https://github.com/seandepagnier/ensemble_weather_pi\n\n"
 "Author:\n"
 "Sean D'Epagnier\n\n"
 "Many thanks to all of the translators and testers."

@@ -35,7 +35,7 @@
 #include "BoatDialog.h"
 //#include "ConfigurationBatchDialog.h"
 #include "RouteMapOverlay.h"
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 #include "WeatherRouting.h"
 #include "FilterRoutesDialog.h"
 

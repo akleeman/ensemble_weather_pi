@@ -25,7 +25,7 @@
 
 #include <wx/wx.h>
 
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 #include "Boat.h"
 #include "BoatDialog.h"
 #include "EditPolarDialog.h"

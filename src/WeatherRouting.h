@@ -40,7 +40,7 @@
 #include "PlotDialog.h"
 #include "FilterRoutesDialog.h"
 
-class weather_routing_pi;
+class ensemble_weather_pi;
 class WeatherRouting;
 
 class WeatherRoute
@@ -79,7 +79,7 @@ public:
           UPWIND_PERCENTAGE, PORT_STARBOARD, TACKS, STATE, NUM_COLS};
     long columns[NUM_COLS];
 
-    WeatherRouting(wxWindow *parent, weather_routing_pi &plugin);
+    WeatherRouting(wxWindow *parent, ensemble_weather_pi &plugin);
     ~WeatherRouting();
 
     void Reset();
@@ -204,7 +204,7 @@ private:
     bool m_bShowConfiguration, m_bShowConfigurationBatch;
     bool m_bShowSettings, m_bShowStatistics, m_bShowReport, m_bShowPlot, m_bShowFilter;
 
-    weather_routing_pi &m_weather_routing_pi;
+    ensemble_weather_pi &m_ensemble_weather_pi;
 };
 
 #endif

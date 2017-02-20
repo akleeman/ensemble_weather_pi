@@ -78,15 +78,15 @@ std::cout << x << std::endl; } while (0)
 //    The PlugIn Class Definition
 //----------------------------------------------------------------------------------------------------------
 
-#define WEATHER_ROUTING_TOOL_POSITION    -1          // Request default positioning of toolbar tool
+#define ENSEMBLE_WEATHER_TOOL_POSITION    -1          // Request default positioning of toolbar tool
 
 class WeatherRouting;
 
-class weather_routing_pi : public wxEvtHandler, public opencpn_plugin_110
+class ensemble_weather_pi : public wxEvtHandler, public opencpn_plugin_110
 {
 public:
-      weather_routing_pi(void *ppimgr);
-      ~weather_routing_pi(void);
+      ensemble_weather_pi(void *ppimgr);
+      ~ensemble_weather_pi(void);
 
       int Init(void);
       bool DeInit(void);

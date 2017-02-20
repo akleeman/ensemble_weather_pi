@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /plugins/weather_routing_pi/po/weather_routing_pi.pot\n"
+"X-Crowdin-File: /plugins/ensemble_weather_pi/po/ensemble_weather_pi.pot\n"
 
 #: src/Boat.cpp:56
 msgid "Boat file does not exist."
@@ -227,8 +227,8 @@ msgstr "Batchmodus genereert meerdere oplossingen op basis van de geselecteerde 
 
 #: src/ConfigurationBatchDialog.cpp:287 src/ConfigurationDialog.cpp:244
 #: src/ConfigurationDialog.cpp:357 src/ReportDialog.cpp:238
-#: src/SettingsDialog.cpp:173 src/weather_routing_pi.cpp:209
-#: src/weather_routing_pi.cpp:248 src/weather_routing_pi.cpp:256
+#: src/SettingsDialog.cpp:173 src/ensemble_weather_pi.cpp:209
+#: src/ensemble_weather_pi.cpp:248 src/ensemble_weather_pi.cpp:256
 #: src/WeatherRouting.cpp:256 src/WeatherRouting.cpp:503
 #: src/WeatherRouting.cpp:744 src/WeatherRouting.cpp:766
 #: src/WeatherRouting.cpp:963 src/WeatherRouting.cpp:1013
@@ -508,23 +508,23 @@ msgid "Specify conditions where we should change to a different plan.\n"
 msgstr "Geef voorwaarden voor waar veranderd moet worden naar een ander plan.\n"
 "Als de voorwaarden in grote mate wijzigen, zal de PlugIn beoordelen of het juist aangepaste plan opnieuw aangepast dient te worden; het is dus alleen nodig om regels te specificeren voor het volgende, dichtstbijzijnde plan."
 
-#: src/weather_routing_pi.cpp:82
-msgid "Weather_Routing"
+#: src/ensemble_weather_pi.cpp:82
+msgid "Ensemble_Weather"
 msgstr "Weerroutering"
 
-#: src/weather_routing_pi.cpp:87
+#: src/ensemble_weather_pi.cpp:87
 msgid "Weather Route Position"
 msgstr "Weerroutepositie"
 
-#: src/weather_routing_pi.cpp:141
+#: src/ensemble_weather_pi.cpp:141
 msgid "WeatherRouting"
 msgstr "Weerroutering"
 
-#: src/weather_routing_pi.cpp:146
+#: src/ensemble_weather_pi.cpp:146
 msgid "Compute optimal routes based on weather and constraints."
 msgstr "Berekenen van de optimale routes op basis van weergegevens en grenswaarden."
 
-#: src/weather_routing_pi.cpp:151
+#: src/ensemble_weather_pi.cpp:151
 msgid "Weather Routing features include:\n"
 "  optimal routing subject to various constraints based on weather data\n"
 "  automatic boat polar computation\n"
@@ -532,15 +532,15 @@ msgstr "De Weerroutering PlugIn heeft de volgende functies: \n"
 "  - berekenen van optimale vaarroute met verschillende beperkingen en gebaseerd op weergegevens\n"
 "  - automatisch berekenen van polairdiagram voor zeilschip.\n"
 
-#: src/weather_routing_pi.cpp:208
+#: src/ensemble_weather_pi.cpp:208
 msgid "Grib plugin version not supported."
 msgstr "GRIB plugin-versie wordt niet ondersteund."
 
-#: src/weather_routing_pi.cpp:247
+#: src/ensemble_weather_pi.cpp:247
 msgid "Climatology plugin version not supported, no climatology data."
 msgstr "De versie van de Klimatologie PlugIn wordt niet ondersteund; geen klimatologiegegevens beschikbaar."
 
-#: src/weather_routing_pi.cpp:255
+#: src/ensemble_weather_pi.cpp:255
 msgid "Climatology plugin out of date, it must be upgraded or resulting routings may be incorrect.\n"
 msgstr "De Klimatologie PlugIn is verouderd en moet worden bijgewerkt, anders zijn de weerroutes mogelijk onjuist.\n"
 
@@ -1626,14 +1626,14 @@ msgid "The weather routing plugin for opencpn is intended to aid in planning sai
 "This also means to educate users about weather trends, to \"discover\" new cruising routes, and to avoid adverse conditions.\n\n"
 "License: GPLv3+\n\n"
 "Source Code:\n"
-"https://github.com/seandepagnier/weather_routing_pi\n\n"
+"https://github.com/seandepagnier/ensemble_weather_pi\n\n"
 "Author:\n"
 "Sean D'Epagnier\n\n"
 "Many thanks to all of the translators and testers."
 msgstr "De Weerroutering PlugIn voor OpenCPN helpt bij de planning van vaarroutes gebaseerd op geautomatiseerde weergegevens en de zeileigenschappen van het vaartuig.\n\n"
 "Ook informeert de PlugIn de gebruikers over weertrends, over nieuwe vaarroutes en over het voorkomen van slechte vaaromstandigheden.\n\n"
 "Licentie: GPLv3 + \n\n"
-"Broncode: \\ nhttps://github.com/seandepagnier/weather_routing_pi \n\n"
+"Broncode: \\ nhttps://github.com/seandepagnier/ensemble_weather_pi \n\n"
 "Auteur:\n"
 "Sean D'Epagnier\n\n"
 "Veel dank aan alle vertalers en testers."

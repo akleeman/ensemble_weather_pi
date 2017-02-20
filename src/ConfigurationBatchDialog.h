@@ -32,7 +32,7 @@
 
 struct RouteMapConfiguration;
 class WeatherRouting;
-class weather_routing_pi;
+class ensemble_weather_pi;
 class wrDC;
 
 struct BatchDestination

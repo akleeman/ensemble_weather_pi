@@ -38,7 +38,7 @@
 #include "Boat.h"
 #include "BoatDialog.h"
 #include "RouteMapOverlay.h"
-#include "weather_routing_pi.h"
+#include "ensemble_weather_pi.h"
 #include "WeatherRouting.h"
 #include "AboutDialog.h"
 #include "icons.h"
@@ -101,7 +101,7 @@ int wxCALLBACK SortWeatherRoutes(long item1, long item2, long list)
     return sortorder * it1.GetText().Cmp(it2.GetText());
 }
 
-WeatherRouting::WeatherRouting(wxWindow *parent, weather_routing_pi &plugin)
+WeatherRouting::WeatherRouting(wxWindow *parent, ensemble_weather_pi &plugin)
     : WeatherRoutingBase(parent), m_ConfigurationDialog(*this),
       m_ConfigurationBatchDialog(this), m_CursorPositionDialog(this),
       m_BoatDialog(*this),
@@ -111,7 +111,7 @@ WeatherRouting::WeatherRouting(wxWindow *parent, weather_routing_pi &plugin)
       m_bShowConfiguration(false), m_bShowConfigurationBatch(false),
       m_bShowSettings(false), m_bShowStatistics(false),
       m_bShowReport(false), m_bShowPlot(false),
-      m_bShowFilter(false), m_weather_routing_pi(plugin)
+      m_bShowFilter(false), m_ensemble_weather_pi(plugin)
 {
     wxIcon icon;
     icon.CopyFromBitmap(*_img_WeatherRouting);
@@ -136,7 +136,7 @@ WeatherRouting::WeatherRouting(wxWindow *parent, weather_routing_pi &plugin)
 
     UpdateColumns();
 
-    m_default_configuration_path = weather_routing_pi::StandardPath()
+    m_default_configuration_path = ensemble_weather_pi::StandardPath()
         + _T("WeatherRoutingConfiguration.xml");
 
     if(!OpenXML(m_default_configuration_path, false)) {
@@ -426,8 +426,8 @@ void WeatherRouting::OnNewPosition( wxCommandEvent& event )
 
 void WeatherRouting::OnUpdateBoat( wxCommandEvent& event )
 {
-    double lat = m_weather_routing_pi.m_boat_lat;
-    double lon = m_weather_routing_pi.m_boat_lon;
+    double lat = m_ensemble_weather_pi.m_boat_lat;
+    double lon = m_ensemble_weather_pi.m_boat_lon;
 
     long index = 0;
     for(std::list<RouteMapPosition>::iterator it = RouteMap::Positions.begin();
@@ -635,8 +635,8 @@ void WeatherRouting::OnWeatherRouteSelected( )
     std::list<RouteMapConfiguration> currentconfigurations;
     for(std::list<RouteMapOverlay*>::iterator it = currentroutemaps.begin();
         it != currentroutemaps.end(); it++) {
-        (*it)->SetCursorLatLon(m_weather_routing_pi.m_cursor_lat,
-                               m_weather_routing_pi.m_cursor_lon);
+        (*it)->SetCursorLatLon(m_ensemble_weather_pi.m_cursor_lat,
+                               m_ensemble_weather_pi.m_cursor_lon);
         currentconfigurations.push_back((*it)->GetConfiguration());
     }
 
@@ -888,7 +888,7 @@ abort:
 
 bool WeatherRouting::Show(bool show)
 {
-    m_weather_routing_pi.ShowMenuItems(show);
+    m_ensemble_weather_pi.ShowMenuItems(show);
 
     if(show) {
         m_ConfigurationDialog.Show(m_bShowConfiguration);
@@ -987,7 +987,7 @@ void WeatherRouting::OnManual ( wxCommandEvent& event )
 void WeatherRouting::OnInformation ( wxCommandEvent& event )
 {
     wxString infolocation = *GetpSharedDataLocation()
-        + _T("plugins/weather_routing_pi/data/") + _("WeatherRoutingInformation.html");
+        + _T("plugins/ensemble_weather_pi/data/") + _("WeatherRoutingInformation.html");
     wxLaunchDefaultBrowser(_T("file://") + infolocation);
 }
 
@@ -1924,7 +1924,7 @@ RouteMapConfiguration WeatherRouting::DefaultConfiguration()
     } else
         configuration.EndLat = 0, configuration.EndLon = 0;
     
-    configuration.boatFileName = weather_routing_pi::StandardPath() + _T("Boat.xml");
+    configuration.boatFileName = ensemble_weather_pi::StandardPath() + _T("Boat.xml");
     
     configuration.Integrator = RouteMapConfiguration::NEWTON;
 
