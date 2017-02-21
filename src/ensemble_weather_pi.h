@@ -1,7 +1,9 @@
 /******************************************************************************
  *
  * Project:  OpenCPN Weather Routing plugin
- * Author:   Sean D'Epagnier
+ * Author:   Alex Kleeman
+ *
+ * (template taken from weather_routing_pi by Sean D'Epagnier)
  *
  ***************************************************************************
  *   Copyright (C) 2015 by Sean D'Epagnier                                 *
@@ -57,7 +59,7 @@ std::cout << x << std::endl; } while (0)
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    10
 
-#define ABOUT_AUTHOR_URL "http://seandepagnier.users.sourceforge.net"
+#define ABOUT_AUTHOR_URL "https://github.com/akleeman"
 
 #include "ocpn_plugin.h"
 #include "wrdc.h"

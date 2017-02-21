@@ -171,7 +171,7 @@ wxBitmap *ensemble_weather_pi::GetPlugInBitmap()
 
 wxString ensemble_weather_pi::GetCommonName()
 {
-      return _("EnsembleWEather");
+      return _("Ensemble Weather");
 }
 
 wxString ensemble_weather_pi::GetShortDescription()
@@ -208,114 +208,6 @@ void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
 
 void ensemble_weather_pi::SetPluginMessage(wxString &message_id, wxString &message_body)
 {
-    if(message_id == _T("GRIB_TIMELINE"))
-    {
-        wxJSONReader r;
-        wxJSONValue v;
-        r.Parse(message_body, &v);
-
-        wxDateTime time;
-        time.Set
-            (v[_T("Day")].AsInt(), (wxDateTime::Month)v[_T("Month")].AsInt(), v[_T("Year")].AsInt(),
-             v[_T("Hour")].AsInt(), v[_T("Minute")].AsInt(), v[_T("Second")].AsInt());
-
-        if(m_pWeather_Routing) {
-            m_pWeather_Routing->m_ConfigurationDialog.m_GribTimelineTime = time.ToUTC();
-            RequestRefresh(m_parent_window);
-        }
-    }
-    if(message_id == _T("GRIB_TIMELINE_RECORD"))
-    {
-        wxJSONReader r;
-        wxJSONValue v;
-        r.Parse(message_body, &v);
-
-        static bool shown_warnings;
-        if(!shown_warnings) {
-            shown_warnings = true;
-
-            int grib_version_major = v[_T("GribVersionMajor")].AsInt();
-            int grib_version_minor = v[_T("GribVersionMinor")].AsInt();
-
-            int grib_version = 1000*grib_version_major + grib_version_minor;
-            int grib_min =     1000*GRIB_MIN_MAJOR     + GRIB_MIN_MINOR;
-            int grib_max =     1000*GRIB_MAX_MAJOR     + GRIB_MAX_MINOR;
-
-            if(grib_version < grib_min || grib_version > grib_max) {
-                wxMessageDialog mdlg(m_parent_window,
-                                     _("Grib plugin version not supported.")
-                                     + _T("\n\n") +
-                                     wxString::Format(_("Use versions %d.%d to %d.%d"), GRIB_MIN_MAJOR, GRIB_MIN_MINOR, GRIB_MAX_MAJOR, GRIB_MAX_MINOR),
-                                     _("Weather Routing"), wxOK | wxICON_WARNING);
-                mdlg.ShowModal();
-            }
-        }
-
-        wxString sptr = v[_T("TimelineSetPtr")].AsString();
-        wxCharBuffer bptr = sptr.To8BitData();
-        const char* ptr = bptr.data();
-
-        GribRecordSet *gptr;
-        sscanf(ptr, "%p", &gptr);
-
-        if(m_pWeather_Routing) {
-            RouteMapOverlay *routemapoverlay = m_pWeather_Routing->m_RouteMapOverlayNeedingGrib;
-            if(routemapoverlay) {
-                routemapoverlay->Lock();
-                routemapoverlay->SetNewGrib(gptr);
-                routemapoverlay->Unlock();
-            }
-        }
-    }
-    if(message_id == _T("CLIMATOLOGY"))
-    {
-        if(!m_pWeather_Routing)
-            return; /* not ready */
-
-        wxJSONReader r;
-        wxJSONValue v;
-        r.Parse(message_body, &v);
-
-        static bool shown_warnings;
-        if(!shown_warnings) {
-            shown_warnings = true;
-
-            int climatology_version_major = v[_T("ClimatologyVersionMajor")].AsInt();
-            int climatology_version_minor = v[_T("ClimatologyVersionMinor")].AsInt();
-
-            int climatology_version = 1000*climatology_version_major + climatology_version_minor;
-            int climatology_min =     1000*CLIMATOLOGY_MIN_MAJOR     + CLIMATOLOGY_MIN_MINOR;
-            int climatology_max =     1000*CLIMATOLOGY_MAX_MAJOR     + CLIMATOLOGY_MAX_MINOR;
-
-            if(climatology_version < climatology_min || climatology_version > climatology_max) {
-                wxMessageDialog mdlg(m_parent_window,
-                                     _("Climatology plugin version not supported, no climatology data.")
-                                     + _T("\n\n") +
-                                     wxString::Format(_("Use versions %d.%d to %d.%d"), CLIMATOLOGY_MIN_MAJOR, CLIMATOLOGY_MIN_MINOR, CLIMATOLOGY_MAX_MAJOR, CLIMATOLOGY_MAX_MINOR),
-                                     _("Ensemble WEather"), wxOK | wxICON_WARNING);
-                mdlg.ShowModal();
-                return;
-            }
-        }
-
-        wxString sptr = v[_T("ClimatologyDataPtr")].AsString();
-        sscanf(sptr.To8BitData().data(), "%p", &RouteMap::ClimatologyData);
-
-        sptr = v[_T("ClimatologyWindAtlasDataPtr")].AsString();
-        sscanf(sptr.To8BitData().data(), "%p", &RouteMap::ClimatologyWindAtlasData);
-
-        sptr = v[_T("ClimatologyCycloneTrackCrossingsPtr")].AsString();
-        sscanf(sptr.To8BitData().data(), "%p", &RouteMap::ClimatologyCycloneTrackCrossings);
-
-        if(m_pWeather_Routing) {
-            m_pWeather_Routing->m_ConfigurationDialog.m_cClimatologyType->Enable
-                (RouteMap::ClimatologyData!=NULL);
-            m_pWeather_Routing->m_ConfigurationDialog.m_pCyclones->Enable
-                (RouteMap::ClimatologyCycloneTrackCrossings!=NULL);
-        }
-    }
-
-
     if(message_id == wxS("ENSEMBLE_WEATHER_PI")) {
         // construct the JSON root object
         wxJSONValue  root;

@@ -123,3 +123,10 @@ ENDIF(MINGW)
 INCLUDE("cmake/PluginInstall.cmake")
 INCLUDE("cmake/PluginLocalization.cmake")
 INCLUDE("cmake/PluginPackage.cmake")
+
+IF (NOT CMAKE_CROSSCOMPILING)
+  add_subdirectory(third_party/googletest)
+ENDIF (NOT CMAKE_CROSSCOMPILING)
+
+add_subdirectory(tests)
+
