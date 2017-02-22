@@ -61,6 +61,8 @@ int    zu_can_read_file(const char *fname);
 
 int    zu_read(ZUFILE *f, void *buf, long len);
 
+char  *zu_gets(ZUFILE *f, char *buf, int len);
+
 long   zu_tell(ZUFILE *f);
 
 int    zu_seek(ZUFILE *f, long offset, int whence);        // TODO: whence=SEEK_END

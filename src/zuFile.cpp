@@ -128,6 +128,38 @@ int  zu_read(ZUFILE *f, void *buf, long len)
     f->pos += nb;
     return nb;
 }
+//----------------------------------------------------
+char *zu_gets(ZUFILE *f, char *buf, int len)
+{
+    int nb = 0;
+    int bzerror=BZ_OK;
+    char *ret = NULL;
+    switch(f->type) {
+        case ZU_COMPRESS_NONE :
+            if((ret = fgets(buf, len, (FILE*)(f->zfile))))
+                nb = strlen(buf);
+            break;
+        case ZU_COMPRESS_GZIP :
+            if((ret = gzgets((gzFile)(f->zfile), buf, len)))
+                nb = strlen(buf);
+            break;
+        case ZU_COMPRESS_BZIP :
+            nb = BZ2_bzRead(&bzerror,(BZFILE*)(f->zfile), buf, len-1);
+            for(int i=0; i<nb; i++)
+                if(buf[i] == '\n') {
+                    int seek = f->pos;
+                    f->pos += nb;
+                    buf[i+1] = '\0';
+                    return zu_seek(f, seek + i + 1, SEEK_SET) == -1 ? NULL : buf;
+                }
+            if(nb > 0) {
+                buf[nb] = '\0';
+                ret = buf;
+            }
+    }
+    f->pos += nb;
+    return ret;
+}
 
 //----------------------------------------------------
 int zu_close(ZUFILE *f)

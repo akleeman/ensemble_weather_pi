@@ -1,15 +1,16 @@
 /******************************************************************************
  *
- * Project:  OpenCPN
- * Purpose:  Ensemble WEather Plugin
- * Author:   David Register / Alex Kleeman
+ * Project:  OpenCPN Weather Routing plugin
+ * Author:   Alex Kleeman
+ *
+ * (template taken from weather_routing_pi by Sean D'Epagnier)
  *
  ***************************************************************************
- *   Copyright (C) 2010 by David S. Register   *
+ *   Copyright (C) 2015 by Sean D'Epagnier                                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
@@ -20,55 +21,75 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA.             *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA.         *
  ***************************************************************************
  */
+#ifdef DEBUG_BUILD
+#  define DEBUGSL(x) do { \
+time_t now = time(0); \
+tm* localtm = localtime(&now); \
+char *stime = asctime(localtm); \
+stime[strlen(stime) - 1 ] = 0; \
+std::cout << stime << " : " << x << std::endl; } while (0)
 
-#ifndef _GRIBPI_H_
-#define _GRIBPI_H_
+#  define DEBUGST(x) do { \
+time_t now = time(0); \
+tm* localtm = localtime(&now); \
+char *stime = asctime(localtm); \
+stime[strlen(stime) - 1 ] = 0; \
+std::cout << stime << " : " << x; } while (0)
 
-#include "wx/wxprec.h"
+#  define DEBUGCONT(x) do { \
+std::cout << x ; } while (0)
 
-#ifndef  WX_PRECOMP
-  #include "wx/wx.h"
-  #include <wx/glcanvas.h>
-#endif //precompiled headers
+#  define DEBUGEND(x) do { \
+std::cout << x << std::endl; } while (0)
+#else
+#  define DEBUGSL(x) do {} while (0)
+#  define DEBUGST(x) do {} while (0)
+#  define DEBUGCONT(x) do {} while (0)
+#  define DEBUGEND(x) do {} while (0)
+#endif
 
-#define     PLUGIN_VERSION_MAJOR    0
-#define     PLUGIN_VERSION_MINOR    0
+#ifndef _WEATHER_ROUTINGPI_H_
+#define _WEATHER_ROUTINGPI_H_
+
+#include "version.h"
 
 #define     MY_API_VERSION_MAJOR    1
-#define     MY_API_VERSION_MINOR    12
+#define     MY_API_VERSION_MINOR    10
 
-#include "../../../include/ocpn_plugin.h"
+#define ABOUT_AUTHOR_URL "https://github.com/akleeman"
 
-#include "../../../include/wx/jsonreader.h"
-#include "../../../include/wx/jsonwriter.h"
+#include "ocpn_plugin.h"
+#include "wrdc.h"
 
-#include "GribSettingsDialog.h"
-#include "GribOverlayFactory.h"
-#include "GribUIDialog.h"
+/* make some warnings go away */
+#ifdef MIN
+#undef MIN
+#endif
+
+#ifdef MAX
+#undef MAX
+#endif
+
+#include "wx/jsonreader.h"
+#include "wx/jsonwriter.h"
 
 //----------------------------------------------------------------------------------------------------------
 //    The PlugIn Class Definition
 //----------------------------------------------------------------------------------------------------------
 
-#define GRIB_TOOL_POSITION    -1          // Request default positioning of ToolBar tool
-#define STARTING_STATE_STYLE  9999        // style option undifined
-#define ATTACHED               0          // dialog are attached
-#define SEPARATED              1          // dialog are separated
-#define ATTACHED_HAS_CAPTION   0          // dialog attached  has a caption
-#define ATTACHED_NO_CAPTION    1          // dialog attached don't have caption
-#define SEPARATED_HORIZONTAL   2          // dialog separated shown honrizontaly
-#define SEPARATED_VERTICAL     3          // dialog separated shown vaerticaly
+#define ENSEMBLE_WEATHER_TOOL_POSITION    -1          // Request default positioning of toolbar tool
 
-class ensemble_weather_pi : public opencpn_plugin_112
+class WeatherRouting;
+
+class ensemble_weather_pi : public wxEvtHandler, public opencpn_plugin_110
 {
 public:
       ensemble_weather_pi(void *ppimgr);
       ~ensemble_weather_pi(void);
 
-//    The required PlugIn Methods
       int Init(void);
       bool DeInit(void);
 
@@ -81,99 +102,46 @@ public:
       wxString GetShortDescription();
       wxString GetLongDescription();
 
-//    The override PlugIn Methods
-      bool MouseEventHook( wxMouseEvent &event);
       bool RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp);
-      void SetCursorLatLon(double lat, double lon);
-      void OnContextMenuItemCallback(int id);
-      void SetPluginMessage(wxString &message_id, wxString &message_body);
       bool RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp);
-      void SendTimelineMessage(wxDateTime time);
+
       void SetDefaults(void);
-      int GetToolBarToolCount(void);
+
+      int GetToolbarToolCount(void);
+
+      void SetCursorLatLon(double lat, double lon);
+
+      void SetPluginMessage(wxString &message_id, wxString &message_body);
+      void SetPositionFixEx(PlugIn_Position_Fix_Ex &pfix);
       void ShowPreferencesDialog( wxWindow* parent );
+
       void OnToolbarToolCallback(int id);
-      bool QualifyCtrlBarPosition( wxPoint position, wxSize size );
-	  void MoveDialog(wxDialog *dialog, wxPoint position);
+      void OnContextMenuItemCallback(int id);
 
-// Other public methods
-      void SetCtrlBarXY   (wxPoint p){ m_CtrlBarxy = p;}
-      void SetCursorDataXY    (wxPoint p){ m_CursorDataxy = p;}
-      void SetCtrlBarSizeXY(wxSize p){ m_CtrlBar_Sizexy = p;}
       void SetColorScheme(PI_ColorScheme cs);
-      void SetDialogFont( wxWindow *window, wxFont *font = OCPNGetFont(_("Dialog"), 10) );
-      void SetCurrentViewPort(PlugIn_ViewPort &vp) { m_current_vp = vp; }
-      PlugIn_ViewPort &GetCurrentViewPort() { return m_current_vp; }
-      
-      void OnGribCtrlBarClose();
+      static wxString StandardPath();
+      void ShowMenuItems(bool show);
 
-      wxPoint GetCtrlBarXY() { return m_CtrlBarxy; }
-      wxPoint GetCursorDataXY() { return m_CursorDataxy; }
-      int  GetTimeZone() { return m_bTimeZone; }
-      int  GetStartOptions() { return m_bStartOptions; }
-      bool GetCopyFirstCumRec() { return  m_bCopyFirstCumRec; }
-      bool GetCopyMissWaveRec() { return  m_bCopyMissWaveRec; }
-
-      GRIBOverlayFactory *m_pGRIBOverlayFactory;
-      GRIBOverlayFactory *GetGRIBOverlayFactory(){ return m_pGRIBOverlayFactory; }
-
-      int   m_MenuItem;
-      bool  m_DialogStyleChanged;
+      double m_boat_lat, m_boat_lon;
+      double m_cursor_lat, m_cursor_lon;
 
 private:
+      void OnCursorLatLonTimer( wxTimerEvent & );
+
       bool LoadConfig(void);
       bool SaveConfig(void);
 
       wxFileConfig     *m_pconfig;
       wxWindow         *m_parent_window;
 
-      GRIBUICtrlBar     *m_pGribCtrlBar;
+      WeatherRouting     *m_pWeather_Routing;
+      wxDateTime m_GribTime;
 
       int              m_display_width, m_display_height;
       int              m_leftclick_tool_id;
+      int              m_position_menu_id;
 
-      wxPoint          m_CtrlBarxy, m_CursorDataxy;
-      wxSize           m_CtrlBar_Sizexy;
-
-      //    Controls added to Preferences panel
-      wxCheckBox              *m_pGRIBUseHiDef;
-      wxCheckBox              *m_pGRIBUseGradualColors;
-
-      GribTimelineRecordSet *m_pLastTimelineSet;
-
-      // preference data
-      bool              m_bGRIBUseHiDef;
-      bool              m_bGRIBUseGradualColors;
-      int              m_bTimeZone;
-      bool             m_bCopyFirstCumRec;
-      bool             m_bCopyMissWaveRec;
-      int              m_bLoadLastOpenFile;
-      int              m_bStartOptions;
-      wxString         m_RequestConfig;
-      wxString         m_bMailToAddresses;
-      wxString         m_bMailFromAddress;
-      wxString         m_ZyGribLogin;
-      wxString         m_ZyGribCode;
-      double           m_GUIScaleFactor;
-
-      bool             m_bGRIBShowIcon;
-
-      bool        m_bShowGrib;
-      PlugIn_ViewPort  m_current_vp;
+      wxTimer m_tCursorLatLon;
 };
 
-//----------------------------------------------------------------------------------------
-// Prefrence dialog definition
-//----------------------------------------------------------------------------------------
-
-class GribPreferencesDialog : public GribPreferencesDialogBase
-{
-public:
-    GribPreferencesDialog( wxWindow *pparent)
-    : GribPreferencesDialogBase(pparent) {}
-    ~GribPreferencesDialog() {}
-
-private:
-    void OnStartOptionChange(wxCommandEvent& event);
-};
 #endif
