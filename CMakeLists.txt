@@ -45,13 +45,12 @@ SET(SRC_ENSEMBLE_WEATHER
             src/PolygonRegion.cpp
             src/WeatherRoutingUI.cpp
             src/icons.cpp
-
             src/wrdc.cpp
             src/TexFont.cpp
-
             src/zuFile.cpp
             src/georef.c
             src/GribRecord.cpp
+            src/VectorUtilities.cpp
 )
 
 IF(WIN32)
@@ -124,9 +123,4 @@ INCLUDE("cmake/PluginInstall.cmake")
 INCLUDE("cmake/PluginLocalization.cmake")
 INCLUDE("cmake/PluginPackage.cmake")
 
-IF (NOT CMAKE_CROSSCOMPILING)
-  add_subdirectory(third_party/googletest)
-ENDIF (NOT CMAKE_CROSSCOMPILING)
-
 add_subdirectory(tests)
-

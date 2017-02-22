@@ -100,6 +100,7 @@ ensemble_weather_pi::~ensemble_weather_pi(void)
 
 int ensemble_weather_pi::Init(void)
 {
+
       AddLocaleCatalog( _T("opencpn-ensemble_weather_pi") );
 
       //    Get a pointer to the opencpn configuration object

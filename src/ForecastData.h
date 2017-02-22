@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 
 #include "GribRecord.h"
-#include "ArrayUtilities.h"
+#include "VectorUtilities.h"
 
 enum ForecastProvider {
     NOAA_GFS,
@@ -59,14 +59,13 @@ class GriddedVariable
         // Value at one point of the grid
         double getValue(const int i, const int j) const  { return data[j*Ni+i]; }
 
-        void setValue(const int i, const int j, double v)
-                        { if (i<Ni && j<Nj)
-                              data[j*Ni+i] = v; }
+        void setValue(const int i, const int j, double v) { if (i<Ni && j<Nj)
+                                                            data[j*Ni+i] = v; }
 
         double  getLatMin() const   { return nanmin(&lats); }
-        double  getLonMin() const   { return lonMin;}
-        double  getLatMax() const   { return latMax;}
-        double  getLonMax() const   { return lonMax;}
+        double  getLonMin() const   { return nanmin(&lons);}
+        double  getLatMax() const   { return nanmax(&lats);}
+        double  getLonMax() const   { return nanmax(&lons);}
 
         // Is a point within the extent of the grid?
         inline bool   isPointInMap(double x, double y) const;
