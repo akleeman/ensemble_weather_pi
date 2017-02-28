@@ -29,34 +29,17 @@ set(CMAKE_CXX_FLAGS -std=gnu++11)
 
 SET(SRC_ENSEMBLE_WEATHER
             src/ensemble_weather_pi.cpp
-            src/WeatherRouting.cpp
-            src/ConfigurationDialog.cpp
-            src/SettingsDialog.cpp
-            src/PlotDialog.cpp
-            src/BoatDialog.cpp
-            src/StatisticsDialog.cpp
-            src/ReportDialog.cpp
-            src/FilterRoutesDialog.cpp
-            src/ConfigurationBatchDialog.cpp
-            src/EditPolarDialog.cpp
-            src/AboutDialog.cpp
-            src/Polar.cpp
-            src/Boat.cpp
-            src/RouteMap.cpp
-            src/RouteMapOverlay.cpp
-            src/Utilities.cpp
-            src/LineBufferOverlay.cpp
-            src/PolygonRegion.cpp
-            src/WeatherRoutingUI.cpp
-            src/icons.cpp
-            src/wrdc.cpp
-            src/TexFont.cpp
-            src/zuFile.cpp
-            src/georef.c
+            src/EnsembleWeatherUI.cpp
             src/GribRecord.cpp
-            # New Files
-            src/VectorUtilities.cpp
+            src/GribUIDialogBase.cpp
             src/GriddedData.cpp
+            src/icons.cpp
+            src/Matrix.cpp
+            src/TexFont.cpp
+            src/Utilities.cpp
+            src/VectorUtilities.cpp
+            src/wrdc.cpp
+            src/zuFile.cpp
 )
 
 IF(WIN32)
@@ -129,4 +112,4 @@ INCLUDE("cmake/PluginInstall.cmake")
 INCLUDE("cmake/PluginLocalization.cmake")
 INCLUDE("cmake/PluginPackage.cmake")
 
-add_subdirectory(tests)
+# add_subdirectory(tests)

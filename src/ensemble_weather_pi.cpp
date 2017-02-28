@@ -28,23 +28,7 @@
 #include <wx/treectrl.h>
 #include <wx/fileconf.h>
 
-#include "Utilities.h"
-#include "Boat.h"
-#include "RouteMapOverlay.h"
-#include "WeatherRouting.h"
 #include "ensemble_weather_pi.h"
-
-// Define minimum and maximum versions of the grib plugin supported
-#define GRIB_MAX_MAJOR 4
-#define GRIB_MAX_MINOR 1
-#define GRIB_MIN_MAJOR 4
-#define GRIB_MIN_MINOR 1
-
-//Define minimum and maximum versions of the climatology plugin supported
-#define CLIMATOLOGY_MAX_MAJOR 1
-#define CLIMATOLOGY_MAX_MINOR 3
-#define CLIMATOLOGY_MIN_MAJOR 0
-#define CLIMATOLOGY_MIN_MINOR 10
 
 static wxJSONValue g_ReceivedODVersionJSONMsg;
 static bool ODVersionNewerThan(int major, int minor, int patch)
@@ -81,8 +65,6 @@ extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
     delete p;
 }
 
-#include "icons.h"
-
 ensemble_weather_pi::ensemble_weather_pi(void *ppimgr)
       :opencpn_plugin_110(ppimgr)
 {
@@ -95,12 +77,11 @@ ensemble_weather_pi::ensemble_weather_pi(void *ppimgr)
 
 ensemble_weather_pi::~ensemble_weather_pi(void)
 {
-      delete _img_WeatherRouting;
+      delete _img_ensemble_weather;
 }
 
 int ensemble_weather_pi::Init(void)
 {
-
       AddLocaleCatalog( _T("opencpn-ensemble_weather_pi") );
 
       //    Get a pointer to the opencpn configuration object
@@ -109,16 +90,21 @@ int ensemble_weather_pi::Init(void)
       // Get a pointer to the opencpn display canvas, to use as a parent for the WEATHER_ROUTING dialog
       m_parent_window = GetOCPNCanvasWindow();
 
-      m_pWeather_Routing = NULL;
+      m_manager = NULL;
 
-      m_leftclick_tool_id  = InsertPlugInTool
-          (_T(""), _img_WeatherRouting, _img_WeatherRouting, wxITEM_CHECK,
-           _("Ensemble_Weather"), _T(""), NULL,
-           ENSEMBLE_WEATHER_TOOL_POSITION, 0, this);
+      m_leftclick_tool_id  = InsertPlugInTool(_T(""), _img_ensemble_weather,
+                                              _img_ensemble_weather,
+                                              wxITEM_CHECK,
+                                              _("Ensemble_Weather"), _T(""),
+                                              NULL,
+                                              ENSEMBLE_WEATHER_TOOL_POSITION,
+                                              0, this);
 
-      wxMenu dummy_menu;
-      m_position_menu_id = AddCanvasContextMenuItem
-          (new wxMenuItem(&dummy_menu, -1, _("Ensemble Weather Position")), this );
+      wxMenu* dummy_menu = NULL;
+      wxMenuItem* table = new wxMenuItem(dummy_menu, wxID_ANY,
+                                         _("Ensemble Weather Position"),
+                                         wxEmptyString, wxITEM_NORMAL);
+      m_position_menu_id = AddCanvasContextMenuItem(table, this);
       SetCanvasContextMenuItemViz(m_position_menu_id, false);
 
       //    And load the configuration items
@@ -136,12 +122,11 @@ int ensemble_weather_pi::Init(void)
 
 bool ensemble_weather_pi::DeInit(void)
 {
-    if(m_pWeather_Routing)
-        m_pWeather_Routing->Close();
-    WeatherRouting *wr = m_pWeather_Routing;
-    m_pWeather_Routing = NULL; /* needed first as destructor may call event loop */
-    delete wr;
-
+    if(m_manager){
+      m_manager->Close();
+      delete m_manager;
+      m_manager = NULL;
+    }
     return true;
 }
 
@@ -167,7 +152,7 @@ int ensemble_weather_pi::GetPlugInVersionMinor()
 
 wxBitmap *ensemble_weather_pi::GetPlugInBitmap()
 {
-    return new wxBitmap(_img_WeatherRouting->ConvertToImage().Copy());
+    return new wxBitmap(_img_ensemble_weather->ConvertToImage().Copy());
 }
 
 wxString ensemble_weather_pi::GetCommonName()
@@ -183,8 +168,8 @@ wxString ensemble_weather_pi::GetShortDescription()
 wxString ensemble_weather_pi::GetLongDescription()
 {
     return _("\
-Ensemble Weather proivdes a way of displaying multiple forecasts,\n\
-often from the same provider which gives a sense of how much you can\n\
+Ensemble Weather provides a way of displaying multiple forecasts,\n\
+often from the same model which gives a sense of how much you can\n\
 trust any given one.\
 ");
 }
@@ -200,9 +185,8 @@ int ensemble_weather_pi::GetToolbarToolCount(void)
 
 void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
 {
-    if(m_pWeather_Routing && m_pWeather_Routing->FirstCurrentRouteMap() && !m_tCursorLatLon.IsRunning())
+    if(m_manager && !m_tCursorLatLon.IsRunning())
         m_tCursorLatLon.Start(50, true);
-
     m_cursor_lat = lat;
     m_cursor_lon = lon;
 }
@@ -230,10 +214,6 @@ void ensemble_weather_pi::SetPluginMessage(wxString &message_id, wxString &messa
             if(root[wxS("Msg")].AsString() == wxS("Version") ) {
                 if(root[wxS("MsgId")].AsString() == wxS("version"))
                     g_ReceivedODVersionJSONMsg = root;
-            } else
-            if(root[wxS("Msg")].AsString() == wxS("GetAPIAddresses") ) {
-                wxString sptr = root[_T("OD_FindClosestBoundaryLineCrossing")].AsString();
-                sscanf(sptr.To8BitData().data(), "%p", &RouteMap::ODFindClosestBoundaryLineCrossing);
             }
         }
     }
@@ -251,14 +231,11 @@ void ensemble_weather_pi::ShowPreferencesDialog( wxWindow* parent )
 
 void ensemble_weather_pi::OnToolbarToolCallback(int id)
 {
-    if(!m_pWeather_Routing) {
-        m_pWeather_Routing = new WeatherRouting(m_parent_window, *this);
-        wxPoint p = m_pWeather_Routing->GetPosition();
-        m_pWeather_Routing->Move(0,0);        // workaround for gtk autocentre dialog behavior
-        m_pWeather_Routing->Move(p);
-
-        SendPluginMessage(wxString(_T("GRIB_TIMELINE_REQUEST")), _T(""));
-        SendPluginMessage(wxString(_T("CLIMATOLOGY_REQUEST")), _T(""));
+    if(!m_manager) {
+        m_manager = new EnsembleWeatherUIBase(m_parent_window);
+        wxPoint p = m_manager->GetPosition();
+        m_manager->Move(0,0);        // workaround for gtk autocentre dialog behavior
+        m_manager->Move(p);
 
         if(ODVersionNewerThan( 1, 1, 15)) {
             wxJSONValue jMsg;
@@ -271,29 +248,26 @@ void ensemble_weather_pi::OnToolbarToolCallback(int id)
             writer.Write( jMsg, MsgString );
             SendPluginMessage( wxS("OCPN_DRAW_PI"), MsgString );
         }
-        
-        m_pWeather_Routing->Reset();
+
+//        m_manager->Reset();
     }
 
-    m_pWeather_Routing->Show(!m_pWeather_Routing->IsShown());
+    m_manager->Show(!m_manager->IsShown());
 }
 
 void ensemble_weather_pi::OnContextMenuItemCallback(int id)
 {
-    if(!m_pWeather_Routing)
+    if(!m_manager)
         return;
 
-    if(id == m_position_menu_id)
-        m_pWeather_Routing->AddPosition(m_cursor_lat, m_cursor_lon);
-
-    m_pWeather_Routing->Reset();
+//    m_manager->Reset();
 }
 
 bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
-    if(m_pWeather_Routing && m_pWeather_Routing->IsShown()) {
+    if(m_manager && m_manager->IsShown()) {
         wrDC wrdc(dc);
-        m_pWeather_Routing->Render(wrdc, *vp);
+//        m_manager->Render(wrdc, *vp);
         return true;
     }
     return false;
@@ -301,9 +275,9 @@ bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 
 bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
-    if(m_pWeather_Routing && m_pWeather_Routing->IsShown()) {
+    if(m_manager && m_manager->IsShown()) {
         wrDC wrdc;
-        m_pWeather_Routing->Render(wrdc, *vp);
+//        m_manager->Render(wrdc, *vp);
         return true;
     }
     return false;
@@ -311,30 +285,18 @@ bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort
 
 void ensemble_weather_pi::OnCursorLatLonTimer( wxTimerEvent & )
 {
-    std::list<RouteMapOverlay *>routemapoverlays = m_pWeather_Routing->CurrentRouteMaps();
-    bool refresh = false;
-    for(std::list<RouteMapOverlay *>::iterator it = routemapoverlays.begin();
-        it != routemapoverlays.end(); it++)
-        if((*it)->SetCursorLatLon(m_cursor_lat, m_cursor_lon))
-            refresh = true;
-
-    m_pWeather_Routing->UpdateCursorPositionDialog();
-
-    if(refresh) {
-        RequestRefresh(m_parent_window);
-        m_pWeather_Routing->CursorRouteChanged();
-    }
+    LOG_DEBUG("OnCursorLatLonTimer not implemented");
 }
 
 bool ensemble_weather_pi::LoadConfig(void)
 {
-      wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
+    wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
 
-      if(!pConf)
-          return false;
+    if(!pConf)
+        return false;
 
-      pConf->SetPath ( _T( "/PlugIns/WeatherRouting" ) );
-      return true;
+    pConf->SetPath( _T("/PlugIns/EnsembleWeather") );
+    return true;
 }
 
 bool ensemble_weather_pi::SaveConfig(void)
@@ -350,7 +312,7 @@ bool ensemble_weather_pi::SaveConfig(void)
 
 void ensemble_weather_pi::SetColorScheme(PI_ColorScheme cs)
 {
-      DimeWindow(m_pWeather_Routing);
+//      DimeWindow(m_manager);
 }
 
 wxString ensemble_weather_pi::StandardPath()

@@ -51,6 +51,10 @@ std::cout << x << std::endl; } while (0)
 #  define DEBUGEND(x) do {} while (0)
 #endif
 
+#ifndef LOG_DEBUG
+#define LOG_DEBUG(x) std::cout << x << std::endl;
+#endif
+
 #ifndef _WEATHER_ROUTINGPI_H_
 #define _WEATHER_ROUTINGPI_H_
 
@@ -76,13 +80,15 @@ std::cout << x << std::endl; } while (0)
 #include "wx/jsonreader.h"
 #include "wx/jsonwriter.h"
 
+#include "icons.h"
+#include "Utilities.h"
+#include "EnsembleWeatherUI.h"
+
 //----------------------------------------------------------------------------------------------------------
 //    The PlugIn Class Definition
 //----------------------------------------------------------------------------------------------------------
 
 #define ENSEMBLE_WEATHER_TOOL_POSITION    -1          // Request default positioning of toolbar tool
-
-class WeatherRouting;
 
 class ensemble_weather_pi : public wxEvtHandler, public opencpn_plugin_110
 {
@@ -133,8 +139,8 @@ private:
 
       wxFileConfig     *m_pconfig;
       wxWindow         *m_parent_window;
+      EnsembleWeatherUIBase *m_manager;
 
-      WeatherRouting     *m_pWeather_Routing;
       wxDateTime m_GribTime;
 
       int              m_display_width, m_display_height;
