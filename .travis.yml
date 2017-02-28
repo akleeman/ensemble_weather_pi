@@ -1,21 +1,27 @@
 language: cpp
 
-addons:
-  apt:
-    sources:
-    - kalakris-cmake
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-5
-    - cmake
-    - gfortran
-    - build-essential
-    - pkg-config
-    - realpath
-    - libwxgtk3.0-dev
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+          - kalakris-cmake
+          - ubuntu-toolchain-r-test
+          packages:
+          - g++-5
+          - cmake
+          - gfortran
+          - build-essential
+          - pkg-config
+          - realpath
+          - libwxgtk3.0-dev
+        env: COMPILER=g++-5
 
 install:
   - mkdir build;
+  - export CXX=g++-5;
+  - export C=g++-5;
 
 script:
   - cd build; cmake -Dtest=ON ../; make;
