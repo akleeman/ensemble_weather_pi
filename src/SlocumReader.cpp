@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif //precompiled headers
 
 #include <stdlib.h>
-#include "ForecastData.h"
+#include "GriddedData.h"
 
 // interpolate two angles in range +- 180 or +-PI, with resulting angle in the same range
 static double interp_angle(double a0, double a1, double d, double p)

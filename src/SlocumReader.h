@@ -38,7 +38,7 @@ Reader for a GRIB file
 #include <map>
 
 
-#include "ForecastData.h"
+#include "GriddedData.h"
 #include "zuFile.h"
 
 //===============================================================
