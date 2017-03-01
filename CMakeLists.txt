@@ -23,6 +23,10 @@ SET(PLUGIN_VERSION "${PLUGIN_VERSION_MAJOR}.${PLUGIN_VERSION_MINOR}.${PLUGIN_VER
 
 INCLUDE("cmake/PluginConfigure.cmake")
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS -std=gnu++11)
+
 SET(SRC_ENSEMBLE_WEATHER
             src/ensemble_weather_pi.cpp
             src/WeatherRouting.cpp
@@ -50,7 +54,9 @@ SET(SRC_ENSEMBLE_WEATHER
             src/zuFile.cpp
             src/georef.c
             src/GribRecord.cpp
+            # New Files
             src/VectorUtilities.cpp
+            src/GriddedData.cpp
 )
 
 IF(WIN32)

@@ -60,9 +60,6 @@ inline double round(double n) { return n < 0.0 ? ceil(n - 0.5) : floor(n + 0.5);
 char *strtok_r(char *str, const char *delim, char **save);
 #endif
 
-#include <cmath>
-using std::isnan;
-
 /* min must have correct paren to make predence correct */
 #ifdef MIN
 #undef MIN
