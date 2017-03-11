@@ -5,8 +5,8 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __NONAME_H__
-#define __NONAME_H__
+#ifndef __ENSEMBLEWEATHERUI_H__
+#define __ENSEMBLEWEATHERUI_H__
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
@@ -25,18 +25,23 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class EnsembleWeatherUI
 ///////////////////////////////////////////////////////////////////////////////
-class EnsembleWeatherUIBase : public wxFrame
+class EnsembleWeatherUI : public wxFrame 
 {
 	private:
 	
 	protected:
 		wxButton* m_open_button;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnOpenFile( wxCommandEvent& event ) { event.Skip(); }
+		
 	
 	public:
-		EnsembleWeatherUIBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Ensemble Weather"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 328,96 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
-		~EnsembleWeatherUIBase();
+		EnsembleWeatherUI( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Ensemble Weather"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 389,62 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		
+		~EnsembleWeatherUI();
 	
 };
 
-#endif //__NONAME_H__
+#endif //__ENSEMBLEWEATHERUI_H__

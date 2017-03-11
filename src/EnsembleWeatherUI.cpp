@@ -9,7 +9,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
-EnsembleWeatherUIBase::EnsembleWeatherUIBase( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+EnsembleWeatherUI::EnsembleWeatherUI( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
@@ -17,15 +17,21 @@ EnsembleWeatherUIBase::EnsembleWeatherUIBase( wxWindow* parent, wxWindowID id, c
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
 	m_open_button = new wxButton( this, wxID_ANY, wxT("open"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer1->Add( m_open_button, 0, wxALL, 5 );
+	bSizer1->Add( m_open_button, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 	
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
 	
 	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_open_button->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnsembleWeatherUI::OnOpenFile ), NULL, this );
 }
 
-EnsembleWeatherUIBase::~EnsembleWeatherUIBase()
+EnsembleWeatherUI::~EnsembleWeatherUI()
 {
+	// Disconnect Events
+	m_open_button->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnsembleWeatherUI::OnOpenFile ), NULL, this );
+	
 }

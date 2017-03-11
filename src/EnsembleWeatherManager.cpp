@@ -1,15 +1,19 @@
-#include <iostream>
 #include "EnsembleWeatherManager.h"
 
 
-EnsembleWeatherManager::EnsembleWeatherManager(wxWindow *parent)
-  : GRIBUICtrlBarBase(parent)
-{
-}
+void EnsembleWeatherManager::Reset(){ }
 
-void EnsembleWeatherManager::Reset(){
-}
+void EnsembleWeatherManager::Render(wrDC &dc, PlugIn_ViewPort &vp){ }
 
-void EnsembleWeatherManager::Render(wrDC &dc, PlugIn_ViewPort &vp){
-  // not ws
+void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
+  wxString error;
+  wxFileDialog openDialog(this,
+                          _( "Select Forecast File" ),
+                          _T(""), wxT ( "" ),
+                          wxT ( "Forecast files (*.fcst)|*.fcst;*.fcst|All files (*.*)|*.*" ),
+                          wxFD_OPEN);
+
+  if(openDialog.ShowModal() == wxID_OK) {
+    // Call slocum reader.
+  }
 }

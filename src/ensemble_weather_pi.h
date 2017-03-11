@@ -82,7 +82,7 @@ std::cout << x << std::endl; } while (0)
 
 #include "icons.h"
 #include "Utilities.h"
-#include "EnsembleWeatherUI.h"
+#include "EnsembleWeatherManager.h"
 
 //----------------------------------------------------------------------------------------------------------
 //    The PlugIn Class Definition
@@ -139,7 +139,7 @@ private:
 
       wxFileConfig     *m_pconfig;
       wxWindow         *m_parent_window;
-      EnsembleWeatherUIBase *m_manager;
+      EnsembleWeatherManager *m_manager;
 
       wxDateTime m_GribTime;
 

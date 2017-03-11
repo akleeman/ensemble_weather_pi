@@ -232,7 +232,7 @@ void ensemble_weather_pi::ShowPreferencesDialog( wxWindow* parent )
 void ensemble_weather_pi::OnToolbarToolCallback(int id)
 {
     if(!m_manager) {
-        m_manager = new EnsembleWeatherUIBase(m_parent_window);
+        m_manager = new EnsembleWeatherManager(m_parent_window);
         wxPoint p = m_manager->GetPosition();
         m_manager->Move(0,0);        // workaround for gtk autocentre dialog behavior
         m_manager->Move(p);
