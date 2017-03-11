@@ -3,6 +3,7 @@
 
 #include "wrdc.h"
 #include "ocpn_plugin.h"
+#include "WindCircle.h"
 #include "EnsembleWeatherUI.h"
 //#include "SlocumReader.h"
 
@@ -23,6 +24,8 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
 
     void Reset();
 
-    void Render(wrDC &dc, PlugIn_ViewPort &vp);
+    void Render(wxDC &dc, PlugIn_ViewPort &vp);
 
+  private:
+    WindCircleFactory m_circle_factory;
 };

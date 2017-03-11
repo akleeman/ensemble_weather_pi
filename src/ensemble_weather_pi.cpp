@@ -231,6 +231,7 @@ void ensemble_weather_pi::ShowPreferencesDialog( wxWindow* parent )
 
 void ensemble_weather_pi::OnToolbarToolCallback(int id)
 {
+    std::cout << "OnToolbarToolCallback" << std::endl;
     if(!m_manager) {
         m_manager = new EnsembleWeatherManager(m_parent_window);
         wxPoint p = m_manager->GetPosition();
@@ -266,8 +267,7 @@ void ensemble_weather_pi::OnContextMenuItemCallback(int id)
 bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
     if(m_manager && m_manager->IsShown()) {
-        wrDC wrdc(dc);
-//        m_manager->Render(wrdc, *vp);
+        m_manager->Render(dc, *vp);
         return true;
     }
     return false;
@@ -277,7 +277,7 @@ bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort
 {
     if(m_manager && m_manager->IsShown()) {
         wrDC wrdc;
-//        m_manager->Render(wrdc, *vp);
+        m_manager->Render(*wrdc.GetDC(), *vp);
         return true;
     }
     return false;
@@ -285,7 +285,8 @@ bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort
 
 void ensemble_weather_pi::OnCursorLatLonTimer( wxTimerEvent & )
 {
-    LOG_DEBUG("OnCursorLatLonTimer not implemented");
+    RequestRefresh(m_parent_window);
+    LOG_DEBUG("OnCursorLatLonTimer");
 }
 
 bool ensemble_weather_pi::LoadConfig(void)
@@ -312,7 +313,7 @@ bool ensemble_weather_pi::SaveConfig(void)
 
 void ensemble_weather_pi::SetColorScheme(PI_ColorScheme cs)
 {
-//      DimeWindow(m_manager);
+      DimeWindow(m_manager);
 }
 
 wxString ensemble_weather_pi::StandardPath()

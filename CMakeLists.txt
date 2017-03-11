@@ -36,10 +36,12 @@ SET(SRC_ENSEMBLE_WEATHER
             src/icons.cpp
             src/Matrix.cpp
             src/TexFont.cpp
+            src/WindCircle.cpp
             src/Utilities.cpp
             src/VectorUtilities.cpp
             src/wrdc.cpp
             src/zuFile.cpp
+            src/LineBufferOverlay.cpp
 )
 
 IF(WIN32)
