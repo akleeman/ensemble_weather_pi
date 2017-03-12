@@ -19,6 +19,24 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
       glPopAttrib();
 }
 
+void EnsembleWeatherManager::OnPaintSpot( wxPaintEvent& event ) {
+  wxWindow *window = dynamic_cast<wxWindow*>(event.GetEventObject());
+  if(!window)
+      return;
+
+  wxPaintDC dc(window);
+  dc.SetBackgroundMode(wxTRANSPARENT);
+
+  wrDC wrdc(dc);
+
+  wxColour test_color(255, 255, 255, 210);
+  wxBrush brush(test_color, wxALPHA_OPAQUE);
+  wrdc.SetBrush(brush);
+
+  wrdc.DrawCircle(10, 10, 10);
+}
+
+
 void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
   wxString error;
   wxFileDialog openDialog(this,

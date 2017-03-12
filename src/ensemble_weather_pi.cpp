@@ -286,8 +286,6 @@ bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort
 
 void ensemble_weather_pi::OnCursorLatLonTimer( wxTimerEvent & )
 {
-    RequestRefresh(m_parent_window);
-    LOG_DEBUG("OnCursorLatLonTimer");
 }
 
 bool ensemble_weather_pi::LoadConfig(void)

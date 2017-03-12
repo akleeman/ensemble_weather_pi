@@ -22,6 +22,8 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
 
     void OnOpenFile(wxCommandEvent& event);
 
+    void OnPaintSpot(wxPaintEvent& event);
+
     void Reset();
 
     void Render(wrDC &wrdc, PlugIn_ViewPort &vp);

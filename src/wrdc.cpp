@@ -789,7 +789,7 @@ void wrDC::DrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxCoord height,
           for (float a = start_rad; a <= end_rad; a += (end_rad - start_rad) / (steps - 1)) {
               // Note that an angle of a=0. corresponds to the east most point (positive x axis)
               // which is done in order to match the conventions of DrawEllipticArc
-              glVertex2f( x + r1 * cosf( a ), y + r2 * sinf( a ) );
+              glVertex2f( x + r1 * cosf( a ), y - r2 * sinf( a ) );
           }
           glEnd();
       }
@@ -797,7 +797,7 @@ void wrDC::DrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxCoord height,
       if( ConfigurePen() ) {
           glBegin( GL_LINE_LOOP );
           for (float a = start_rad; a <= end_rad; a += (end_rad - start_rad) / (steps - 1) )
-              glVertex2f( x + r1 * cosf( a ), y + r2 * sinf( a ) );
+              glVertex2f( x + r1 * cosf( a ), y - r2 * sinf( a ) );
           glEnd();
       }
 

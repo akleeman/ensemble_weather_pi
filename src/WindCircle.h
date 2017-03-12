@@ -31,5 +31,5 @@ private:
 
     LineBuffer m_circle;
     wxColour m_circle_fill;
-
+    wxColour m_wind_colors[13];
 };
