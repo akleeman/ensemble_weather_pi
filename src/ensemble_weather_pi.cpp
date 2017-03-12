@@ -267,7 +267,8 @@ void ensemble_weather_pi::OnContextMenuItemCallback(int id)
 bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
     if(m_manager && m_manager->IsShown()) {
-        m_manager->Render(dc, *vp);
+        wrDC wrdc(dc);
+        m_manager->Render(wrdc, *vp);
         return true;
     }
     return false;
@@ -277,7 +278,7 @@ bool ensemble_weather_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort
 {
     if(m_manager && m_manager->IsShown()) {
         wrDC wrdc;
-        m_manager->Render(*wrdc.GetDC(), *vp);
+        m_manager->Render(wrdc, *vp);
         return true;
     }
     return false;

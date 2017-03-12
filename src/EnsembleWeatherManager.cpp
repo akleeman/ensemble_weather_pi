@@ -3,9 +3,20 @@
 
 void EnsembleWeatherManager::Reset(){ }
 
-void EnsembleWeatherManager::Render(wxDC &dc, PlugIn_ViewPort &vp){
-  std::cout << "EnsembleWeatherManager::Render" << std::endl;
-  m_circle_factory.render(dc, vp);
+void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
+
+  if(!wrdc.GetDC()) {
+      glPushAttrib(GL_LINE_BIT | GL_ENABLE_BIT | GL_HINT_BIT ); //Save state
+      glEnable( GL_LINE_SMOOTH );
+      glEnable( GL_BLEND );
+      glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+      glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+  }
+
+  m_circle_factory.Render(wrdc, vp);
+
+  if(!wrdc.GetDC())
+      glPopAttrib();
 }
 
 void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
