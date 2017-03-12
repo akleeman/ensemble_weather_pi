@@ -17,8 +17,8 @@ class PlugIn_ViewPort;
 
 class WindCircleFactory {
 public:
-    WindCircleFactory();
 
+    WindCircleFactory();
     bool Render(wrDC &wrdc, PlugIn_ViewPort &vp);
     void Reset() {};
     void ClearCached() {};
@@ -30,4 +30,6 @@ private:
 //    void render_circles();
 
     LineBuffer m_circle;
+    wxColour m_circle_fill;
+
 };

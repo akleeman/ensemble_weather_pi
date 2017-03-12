@@ -727,7 +727,7 @@ void wrDC::DrawRoundedRectangle( wxCoord x, wxCoord y, wxCoord w, wxCoord h, wxC
 
 void wrDC::DrawCircle( wxCoord x, wxCoord y, wxCoord radius )
 {
-    DrawEllipse( x - radius, y - radius, 2 * radius, 2 * radius );
+    DrawEllipse(x, y, 2 * radius, 2 * radius );
 }
 
 void wrDC::StrokeCircle( wxCoord x, wxCoord y, wxCoord radius )
@@ -746,42 +746,64 @@ void wrDC::StrokeCircle( wxCoord x, wxCoord y, wxCoord radius )
         dc->CalcBoundingBox( x - radius - 2, y - radius - 2 );
     } else
 #endif
-        DrawCircle( x, y, radius );
+        DrawCircle(x, y, radius);
 }
 
 void wrDC::DrawEllipse( wxCoord x, wxCoord y, wxCoord width, wxCoord height )
 {
-    if( dc )
-        dc->DrawEllipse( x, y, width, height );
+    DrawEllipticArc(x, y, width, height, 0., 360.);
+}
+
+/*
+ *  Draws a partial elliptical section, all angles should be specified in degrees with
+ *  an angle of 0. corresponding to a direction along the positive x axis.
+ *
+ *  See the documentation on wxDC.DrawEllipticArc() for details.
+ */
+void wrDC::DrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxCoord height, double start, double end)
+{
+  if( dc )
+      dc->DrawEllipticArc( x, y, width, height, start, end);
 #ifdef ocpnUSE_GL
-    else {
-        float r1 = width / 2, r2 = height / 2;
-        float cx = x + r1, cy = y + r2;
+  else {
+      float r1 = width / 2, r2 = height / 2;
 
-        //      Enable anti-aliased lines, at best quality
-        glEnable( GL_BLEND );
+      //      Enable anti-aliased lines, at best quality
+      glEnable( GL_BLEND );
 
-        /* formula for variable step count to produce smooth ellipse */
-        float steps = floorf(wxMax(sqrtf(sqrtf((float)(width*width + height*height))), 1) * M_PI);
+      /* formula for variable step count to produce smooth ellipse */
+      float steps = floorf(wxMax(sqrtf(sqrtf((float)(width*width + height*height))), 1) * M_PI);
 
-        if( ConfigureBrush() ) {
-            glBegin( GL_TRIANGLE_FAN );
-            glVertex2f( cx, cy );
-            for( float a = 0; a <= 2 * M_PI + M_PI/steps; a += 2 * M_PI / steps )
-                glVertex2f( cx + r1 * sinf( a ), cy + r2 * cosf( a ) );
-            glEnd();
-        }
+      float start_rad = M_PI * start / 180.;
+      float end_rad = M_PI * end / 180.;
 
-        if( ConfigurePen() ) {
-            glBegin( GL_LINE_LOOP );
-            for( float a = 0; a < 2 * M_PI - M_PI/steps; a += 2 * M_PI / steps )
-                glVertex2f( cx + r1 * sinf( a ), cy + r2 * cosf( a ) );
-            glEnd();
-        }
+      while (end_rad <= start_rad){
+        end_rad += 2 * M_PI;
+      }
 
-        glDisable( GL_BLEND );
-    }
-#endif    
+      if( ConfigureBrush() ) {
+          glBegin( GL_TRIANGLE_FAN );
+          glVertex2f( x, y );
+          // We stride by the total angle to be covered divided by one fewer than the number
+          // of steps.
+          for (float a = start_rad; a <= end_rad; a += (end_rad - start_rad) / (steps - 1)) {
+              // Note that an angle of a=0. corresponds to the east most point (positive x axis)
+              // which is done in order to match the conventions of DrawEllipticArc
+              glVertex2f( x + r1 * cosf( a ), y + r2 * sinf( a ) );
+          }
+          glEnd();
+      }
+
+      if( ConfigurePen() ) {
+          glBegin( GL_LINE_LOOP );
+          for (float a = start_rad; a <= end_rad; a += (end_rad - start_rad) / (steps - 1) )
+              glVertex2f( x + r1 * cosf( a ), y + r2 * sinf( a ) );
+          glEnd();
+      }
+
+      glDisable( GL_BLEND );
+  }
+#endif
 }
 
 void wrDC::DrawPolygon( int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset )

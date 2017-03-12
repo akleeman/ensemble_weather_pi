@@ -27,5 +27,5 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
     void Render(wrDC &wrdc, PlugIn_ViewPort &vp);
 
   private:
-    WindCircleFactory m_circle_factory;
+    WindCircleFactory m_wind_circle_factory;
 };

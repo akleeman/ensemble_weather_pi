@@ -96,6 +96,7 @@ public:
      void StrokeCircle(wxCoord x, wxCoord y, wxCoord radius);
 
      void DrawEllipse(wxCoord x, wxCoord y, wxCoord width, wxCoord height);
+     void DrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxCoord height, double start, double end);
      void DrawPolygon(int n, wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0);
      void StrokePolygon(int n, wxPoint points[], wxCoord xoffset = 0, wxCoord yoffset = 0);
 
