@@ -28,6 +28,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS -std=gnu++11)
 
 SET(SRC_ENSEMBLE_WEATHER
+            src/Slocum.cpp
             src/ensemble_weather_pi.cpp
             src/EnsembleWeatherUI.cpp
             src/EnsembleWeatherManager.cpp
@@ -41,7 +42,6 @@ SET(SRC_ENSEMBLE_WEATHER
             src/VectorUtilities.cpp
             src/wrdc.cpp
             src/zuFile.cpp
-            src/LineBufferOverlay.cpp
 )
 
 IF(WIN32)
@@ -60,12 +60,15 @@ SET(SRC_LIBTESS2
   src/libtess2/sweep.c
   src/libtess2/tess.c)
 
+SET(SRC_GZSTREAM
+  src/gzstream/gzstream.C)
+
 IF(UNIX)
  INCLUDE("cmake/FindTinyXML.cmake")
  FIND_PACKAGE(TinyXML QUIET)
 ENDIF(UNIX)
 
-SET(SRC ${SRC_ENSEMBLE_WEATHER} ${SRC_JSON} ${SRC_LIBTESS2})
+SET(SRC ${SRC_ENSEMBLE_WEATHER} ${SRC_JSON} ${SRC_LIBTESS2} ${SRC_GZSTREAM})
 
 IF(TINYXML_FOUND)
  message (STATUS "Building with system tinyxml")
@@ -84,9 +87,11 @@ ELSE(TINYXML_FOUND)
 ENDIF(TINYXML_FOUND)
 ADD_DEFINITIONS(-DTIXML_USE_STL)
 
+INCLUDE_DIRECTORIES(${PLUGIN_SOURCE_DIR}/src/gzstream)
+
 IF(NOT UNIX)
     SET(SRC_BZIP
-            src/bzip2/bzlib.c
+            src/bzip2/bzflib.c
             src/bzip2/blocksort.c
             src/bzip2/compress.c
             src/bzip2/crctable.c
@@ -114,4 +119,4 @@ INCLUDE("cmake/PluginInstall.cmake")
 INCLUDE("cmake/PluginLocalization.cmake")
 INCLUDE("cmake/PluginPackage.cmake")
 
-# add_subdirectory(tests)
+add_subdirectory(tests)

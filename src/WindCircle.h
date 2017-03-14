@@ -10,7 +10,6 @@
 
 #include "wrdc.h"
 #include "ocpn_plugin.h"
-#include "LineBufferOverlay.h"
 
 class PlugIn_ViewPort;
 
@@ -29,7 +28,6 @@ private:
 //    bool render_grib_overlay(wxDC &dc, PlugIn_ViewPort *vp);
 //    void render_circles();
 
-    LineBuffer m_circle;
     wxColour m_circle_fill;
     wxColour m_wind_colors[13];
 };

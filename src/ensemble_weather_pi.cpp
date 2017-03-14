@@ -66,7 +66,7 @@ extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
 }
 
 ensemble_weather_pi::ensemble_weather_pi(void *ppimgr)
-      :opencpn_plugin_110(ppimgr)
+      :opencpn_plugin_112(ppimgr)
 {
       // Create the PlugIn icons
       initialize_images();
@@ -82,6 +82,7 @@ ensemble_weather_pi::~ensemble_weather_pi(void)
 
 int ensemble_weather_pi::Init(void)
 {
+
       AddLocaleCatalog( _T("opencpn-ensemble_weather_pi") );
 
       //    Get a pointer to the opencpn configuration object
@@ -116,6 +117,7 @@ int ensemble_weather_pi::Init(void)
               WANTS_CONFIG              |
               WANTS_CURSOR_LATLON       |
               WANTS_NMEA_EVENTS         |
+              WANTS_MOUSE_EVENTS        |
               WANTS_PLUGIN_MESSAGING
             );
 }
@@ -189,6 +191,13 @@ void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
         m_tCursorLatLon.Start(50, true);
     m_cursor_lat = lat;
     m_cursor_lon = lon;
+}
+
+bool ensemble_weather_pi::MouseEventHook(wxMouseEvent &event){
+    if (event.LeftDown()) {
+      std::cout << "Mouse Event! " << event.LeftDown() << std::endl;
+    }
+    return true;
 }
 
 void ensemble_weather_pi::SetPluginMessage(wxString &message_id, wxString &message_body)

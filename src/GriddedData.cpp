@@ -27,21 +27,27 @@ void meshgrid(const std::vector<double> x, std::vector<double> y,
 
 
 // Creates a GriddedVariable using
-GriddedVariable::GriddedVariable(const Matrix<double> lons,
-                                 const Matrix<double> lats,
+GriddedVariable::GriddedVariable(const Matrix<double> *lons,
+                                 const Matrix<double> *lats,
                                  const Matrix<double> *data,
                                  const time_t *valid_time,
                                  const time_t *ref_time,
                                  const variable_t *variable){
+  if (!lons){
+    return;
+  }
+
+  _lons = *lons;
+  _lats = *lats;
+
 
   int m, n;
-  std::tie(m, n) = lons.shape();
+  std::tie(m, n) = _lons.shape();
 
   // The grid is defined by longitudes and latitudes, here
   // we make sure those are the same shape.
-  assert(lons.shape() == lats.shape());
-  _lons = lons;
-  _lats = lats;
+  assert(_lons.shape() == _lats.shape());
+
 
   if (data != NULL){
     // data is an optional argument, if it's provided we use and
@@ -55,7 +61,7 @@ GriddedVariable::GriddedVariable(const Matrix<double> lons,
     _values = Matrix<double>(m, n);
   }
   // Make sure the data matches the coordinates
-  assert(lons.shape() == _values.shape());
+  assert(_lons.shape() == _values.shape());
 
   // Check if we supplied a non-null valid time
   if (valid_time == NULL){

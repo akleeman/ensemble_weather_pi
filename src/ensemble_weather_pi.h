@@ -61,7 +61,7 @@ std::cout << x << std::endl; } while (0)
 #include "version.h"
 
 #define     MY_API_VERSION_MAJOR    1
-#define     MY_API_VERSION_MINOR    10
+#define     MY_API_VERSION_MINOR    12
 
 #define ABOUT_AUTHOR_URL "https://github.com/akleeman"
 
@@ -81,6 +81,7 @@ std::cout << x << std::endl; } while (0)
 #include "wx/jsonwriter.h"
 
 #include "icons.h"
+#include "Slocum.h"
 #include "Utilities.h"
 #include "EnsembleWeatherManager.h"
 
@@ -90,7 +91,7 @@ std::cout << x << std::endl; } while (0)
 
 #define ENSEMBLE_WEATHER_TOOL_POSITION    -1          // Request default positioning of toolbar tool
 
-class ensemble_weather_pi : public wxEvtHandler, public opencpn_plugin_110
+class ensemble_weather_pi : public wxEvtHandler, public opencpn_plugin_112
 {
 public:
       ensemble_weather_pi(void *ppimgr);
@@ -121,6 +122,7 @@ public:
       void SetPositionFixEx(PlugIn_Position_Fix_Ex &pfix);
       void ShowPreferencesDialog( wxWindow* parent );
 
+      bool MouseEventHook(wxMouseEvent &event);
       void OnToolbarToolCallback(int id);
       void OnContextMenuItemCallback(int id);
 

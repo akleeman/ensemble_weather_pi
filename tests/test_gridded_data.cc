@@ -12,7 +12,7 @@ GriddedVariable makeTestData() {
   meshgrid(lon_vals, lat_vals, &lons, &lats);
 
 //  Matrix<double> data;
-  GriddedVariable var(lons, lats);
+  GriddedVariable var(&lons, &lats);
   return var;
 }
 

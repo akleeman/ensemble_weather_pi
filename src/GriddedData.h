@@ -48,8 +48,8 @@ class GriddedVariable
 {
     public:
 
-        GriddedVariable(const Matrix<double> lon,
-                        const Matrix<double> lat,
+        GriddedVariable(const Matrix<double> *lon = nullptr,
+                        const Matrix<double> *lat = nullptr,
                         const Matrix<double> *data = nullptr,
                         const time_t *val_time = nullptr,
                         const time_t *ref_time = nullptr,

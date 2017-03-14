@@ -20,7 +20,8 @@ if (test)
   SET(UTILS_SRC
       ../src/VectorUtilities.cpp
       ../src/Matrix.cpp
-      ../src/GriddedData.cpp)
+      ../src/GriddedData.cpp
+      ../src/Slocum.cpp)
   
   ADD_LIBRARY(ensemble_weather_pi_utils SHARED ${UTILS_SRC})
   
@@ -28,9 +29,14 @@ if (test)
     test_matrix.cc
     test_vector_utils.cc
     test_gridded_data.cc
+    test_slocum.cc
     )
   
-  target_link_libraries(unit_tests ensemble_weather_pi_utils gtest gtest_main pthread)
+  
+  FIND_PACKAGE(ZLIB REQUIRED)
+  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
+  
+  target_link_libraries(unit_tests ensemble_weather_pi_utils gtest gtest_main pthread ${ZLIB_LIBRARY})
   set_property(TARGET unit_tests PROPERTY CXX_STANDARD 11)
   
   add_custom_command(
