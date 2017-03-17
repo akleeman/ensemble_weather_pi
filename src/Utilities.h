@@ -40,9 +40,8 @@
 # define INFINITY std::numeric_limits<double>::infinity ()
 # endif
 
-#ifndef LOG_DEBUG
-#define LOG_DEBUG(x) std::cout << x << std::endl;
-#endif
+#define DEBUG = true;
+#define PRINT_DEBUG(x) if(DEBUG) std::cout << x << std::endl;
 
 //#define isnan _isnan
 #define isinf(x) (!_finite(x) && !_isnan(x))

@@ -21,7 +21,9 @@ if (test)
       ../src/VectorUtilities.cpp
       ../src/Matrix.cpp
       ../src/GriddedData.cpp
-      ../src/Slocum.cpp)
+      ../src/Slocum.cpp
+      ../src/Tensor.cpp
+      )
   
   ADD_LIBRARY(ensemble_weather_pi_utils SHARED ${UTILS_SRC})
   
@@ -30,6 +32,7 @@ if (test)
     test_vector_utils.cc
     test_gridded_data.cc
     test_slocum.cc
+    test_tensor.cc
     )
   
   

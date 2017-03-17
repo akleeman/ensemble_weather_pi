@@ -60,15 +60,15 @@ SET(SRC_LIBTESS2
   src/libtess2/sweep.c
   src/libtess2/tess.c)
 
-SET(SRC_GZSTREAM
-  src/gzstream/gzstream.C)
+#SET(SRC_GZSTREAM
+#  src/gzstream/gzstream.C)
 
 IF(UNIX)
  INCLUDE("cmake/FindTinyXML.cmake")
  FIND_PACKAGE(TinyXML QUIET)
 ENDIF(UNIX)
 
-SET(SRC ${SRC_ENSEMBLE_WEATHER} ${SRC_JSON} ${SRC_LIBTESS2} ${SRC_GZSTREAM})
+SET(SRC ${SRC_ENSEMBLE_WEATHER} ${SRC_JSON} ${SRC_LIBTESS2})
 
 IF(TINYXML_FOUND)
  message (STATUS "Building with system tinyxml")

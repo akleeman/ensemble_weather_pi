@@ -9,6 +9,14 @@
 
 #include "GriddedData.h"
 
+#define DEBUG true
+#define PRINT_DEBUG(x) if(DEBUG) std::cout << x << std::endl
+
+// Be sure to only execute the following once.
+#ifndef _SLOCUM_H_
+#define _SLOCUM_H_
+
+
 enum VariableID {
   TIME_ID,
   REALIZATION_ID,
@@ -30,30 +38,41 @@ struct compressed_variable_t {
 };
 
 
-class AbstractVariable {
-
-  public:
-
-    void decompress(compressed_variable_t compressed);
-
+struct variable_definition_t {
+    std::string name;
+    std::string long_name;
+    std::vector<VariableID> dims;
+    std::string units;
 };
 
 
-class TimeVariable : AbstractVariable {
+std::vector<int> expand_small_ints(std::string compressed);
 
-  public:
+std::vector<double> expand_small_floats(std::string compressed);
 
-    void decompress(compressed_variable_t compressed);
+std::vector<double> expand_tiny_array(std::string compressed,
+                                      std::vector<double> bins,
+                                      std::vector<int> shape,
+                                      bool wrap=false,
+                                      double wrap_value=0.);
 
-  private:
+std::vector<double> expand_tiny_direction(std::string compressed,
+                                          std::vector<int> shape);
 
-    std::vector<time_t> m_data;
-};
-
+std::vector<int> unpack_ints(std::string packed_array, int bits, int size);
 
 std::string zlib_decompress(const std::string& str);
 
 compressed_variable_t extract_one_variable(std::string encoded_variables);
 
-GriddedVariable read_slocum_forecast(std::string filename);
+std::map<VariableID, compressed_variable_t> split_by_variable(std::string encoded_variables);
 
+EnsembleForecast read_slocum_forecast(std::string filename);
+
+std::vector<time_t> expand_time(std::string compressed);
+
+std::vector<int> expand_realization(std::string compressed);
+
+double expand_wind(std::string compressed, std::vector<int> shape);
+
+#endif

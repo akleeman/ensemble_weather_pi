@@ -29,6 +29,7 @@
 #include "tinyxml/tinyxml.h"
 
 #include "Utilities.h"
+
 double deg2rad(double degrees)
 {
   return M_PI * degrees / 180.0;

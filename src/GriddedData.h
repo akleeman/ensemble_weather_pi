@@ -58,29 +58,29 @@ class GriddedVariable
         virtual ~GriddedVariable() {};
 
         // get/set variable descriptor
-        variable_t get_variable() const { return _variable; }
+        variable_t get_variable() const { return m_variable; }
         void set_variable(const variable_t new_variable) {
-          _variable = new_variable;
+          m_variable = new_variable;
         }
 
         // get/set valid time.
-        time_t get_valid_time() const { return _valid_time; }
+        time_t get_valid_time() const { return m_valid_time; }
         void set_valid_time(const time_t valid_time) {
-          _valid_time = valid_time;
+          m_valid_time = valid_time;
         }
 
         // get/set reference time
-        time_t get_reference_time() const { return _valid_time; }
+        time_t get_reference_time() const { return m_valid_time; }
         void set_reference_time(const time_t valid_time) {
-          _valid_time = valid_time;
+          m_valid_time = valid_time;
         }
 
         // get/set individual values
-        void set(int i, int j, double v) { _values.set(i, j, v); }
-        double get(int i, int j) { return _values.get(i, j); }
+        void set(int i, int j, double v) { m_values.set(i, j, v); }
+        double get(int i, int j) { return m_values.get(i, j); }
 
         // Number of East-West then North-South points.
-        std::tuple<int, int> shape() const { return _values.shape(); }
+        std::tuple<int, int> shape() const { return m_values.shape(); }
 
         // Is a point within the extent of the grid?
         inline bool   contains_point(double lon, double lat) const;
@@ -88,12 +88,69 @@ class GriddedVariable
         void   print();
 
     protected:
-        Matrix<double> _values;
-        Matrix<double> _lons;
-        Matrix<double> _lats;
+        Matrix<double> m_values;
+        Matrix<double> m_lons;
+        Matrix<double> m_lats;
 
-        variable_t _variable;
+        variable_t m_variable;
 
-        time_t _valid_time;      // the time the variable is valid for.
-        time_t _reference_time;      // the time the variable was produced
+        time_t m_valid_time;      // the time the variable is valid for.
+        time_t m_reference_time;      // the time the variable was produced
+};
+
+
+class ForecastVariable
+{
+   public:
+
+       GriddedVariable get_time(time_t t);
+
+   protected:
+
+       time_t m_reference_time; // The time the forecast was produced
+       variable_t m_variable;
+       int m_realization;
+
+       std::vector<time_t> m_times; // An array of valid times
+       Matrix<double> m_lons;
+       Matrix<double> m_lats;
+
+};
+
+
+class EnsembleForecastVariable
+{
+    public:
+
+        ForecastVariable get_realization(int i);
+
+    protected:
+
+        time_t m_reference_time; // The time the forecast was produced
+        variable_t m_variable;
+
+        std::vector<int> m_realizations;
+        std::vector<time_t> m_times; // An array of valid times
+        Matrix<double> m_lons;
+        Matrix<double> m_lats;
+        double ***data[];
+};
+
+
+class EnsembleForecast
+{
+    public:
+
+        EnsembleForecastVariable get_variable(std::string variable_name);
+
+    protected:
+
+        time_t m_reference_time; // The time the forecast was produced
+
+        std::vector<variable_t> m_variables;
+        std::vector<int> m_realization;
+        std::vector<time_t> m_time; // An array of valid times
+        Matrix<double> m_lons;
+        Matrix<double> m_lats;
+
 };

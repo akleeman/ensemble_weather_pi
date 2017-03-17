@@ -55,8 +55,8 @@ std::cout << x << std::endl; } while (0)
 #define LOG_DEBUG(x) std::cout << x << std::endl;
 #endif
 
-#ifndef _WEATHER_ROUTINGPI_H_
-#define _WEATHER_ROUTINGPI_H_
+#ifndef _ENSEMBLE_WEATHERPI_H_
+#define _ENSEMBLE_WEATHERPI_H_
 
 #include "version.h"
 

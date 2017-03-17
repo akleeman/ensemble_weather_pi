@@ -37,31 +37,31 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
     return;
   }
 
-  _lons = *lons;
-  _lats = *lats;
+  m_lons = *lons;
+  m_lats = *lats;
 
 
   int m, n;
-  std::tie(m, n) = _lons.shape();
+  std::tie(m, n) = m_lons.shape();
 
   // The grid is defined by longitudes and latitudes, here
   // we make sure those are the same shape.
-  assert(_lons.shape() == _lats.shape());
+  assert(m_lons.shape() == m_lats.shape());
 
 
   if (data != NULL){
     // data is an optional argument, if it's provided we use and
     // and make sure its size agrees with the dimensions m and n.
-    _values = *data;
+    m_values = *data;
     std::tuple<int, int> expected_shape = std::make_tuple(m, n);
-    assert(_values.shape() == expected_shape);
+    assert(m_values.shape() == expected_shape);
   } else {
     // otherwise we just create an empty vector and assume the user
     // is going to fill it in later.
-    _values = Matrix<double>(m, n);
+    m_values = Matrix<double>(m, n);
   }
   // Make sure the data matches the coordinates
-  assert(_lons.shape() == _values.shape());
+  assert(m_lons.shape() == m_values.shape());
 
   // Check if we supplied a non-null valid time
   if (valid_time == NULL){
@@ -69,7 +69,7 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
     time(&cur_time);
     valid_time = &cur_time;
   }
-  _valid_time = *valid_time;
+  m_valid_time = *valid_time;
 
   // Check if we supplied a non-null reference time
   if (ref_time == NULL){
@@ -77,12 +77,12 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
     time(&cur_time);
     ref_time = &cur_time;
   }
-  _reference_time = *ref_time;
+  m_reference_time = *ref_time;
 
   // Check if we supplied a non-null variable descriptor
   if (variable == NULL){
     variable_t empty_variable;
     variable = &empty_variable;
   }
-  _variable = *variable;
+  m_variable = *variable;
 }
