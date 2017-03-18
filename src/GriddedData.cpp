@@ -1,6 +1,28 @@
 #include "GriddedData.h"
 
 
+variable_t time_variable = {.name = "time",
+                            .long_name = "Time (utc)",
+                            .dims = {TIME_ID},
+                            };
+
+variable_t wind_speed_variable = {.name = "wind_speed",
+                                  .long_name = "Surface Wind Speed",
+                                  .dims = {TIME_ID, REALIZATION_ID, LONGITUDE_ID, LATITUDE_ID},
+                                  .units = "knots",
+                                  };
+
+variable_t wind_direction_variable = {.name = "wind_direction",
+                                      .long_name = "Surface Wind Direction",
+                                      .dims = {TIME_ID, REALIZATION_ID, LONGITUDE_ID, LATITUDE_ID},
+                                      .units = "radians",
+                                      };
+
+//std::map<VariableID, variable_t> variable_from_id;
+//variable_from_id[WIND_SPEED_ID] = wind_speed_variable;
+//variable_from_id[WIND_DIRECTION_ID] = wind_direction_variable;
+
+
 // Creates matrices of gridded values by specifying the x and y
 // coordinates along the edges.  For example, when working with
 // gridded data on a map it is often the case that the grid is
@@ -42,7 +64,8 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
 
 
   int m, n;
-  std::tie(m, n) = m_lons.shape();
+  m = m_lons.shape()[0];
+  n = m_lons.shape()[1];
 
   // The grid is defined by longitudes and latitudes, here
   // we make sure those are the same shape.
@@ -53,7 +76,7 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
     // data is an optional argument, if it's provided we use and
     // and make sure its size agrees with the dimensions m and n.
     m_values = *data;
-    std::tuple<int, int> expected_shape = std::make_tuple(m, n);
+    std::vector<int> expected_shape = {m, n};
     assert(m_values.shape() == expected_shape);
   } else {
     // otherwise we just create an empty vector and assume the user
@@ -86,3 +109,49 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
   }
   m_variable = *variable;
 }
+
+
+//EnsembleForecastVariable::EnsembleForecastVariable(VariableID id,
+//                                                   Tensor<double> data,
+//                                                   std::vector<time_t> time,
+//                                                   std::vector<int> realization,
+//                                                   Matrix<double> lons,
+//                                                   Matrix<double> lats){
+//    m_id = id;
+//    m_data = data;
+//    m_times = time;
+//    m_realizations = realization;
+//    m_lons = lons;
+//    m_lats = lats;
+//}
+
+
+EnsembleForecast::EnsembleForecast(std::vector<time_t> time,
+                                   std::vector<int> realization,
+                                   std::vector<double> lons,
+                                   std::vector<double> lats){
+    m_times = time;
+    m_realizations = realization;
+    meshgrid(lons, lats, &m_lons, &m_lats);
+}
+
+
+std::vector<int> EnsembleForecast::shape(){
+  return {(int) m_times.size(),
+          (int) m_realizations.size(),
+          (int) m_lons.shape()[0],
+          (int) m_lats.shape()[1]};
+}
+
+
+void EnsembleForecast::add_variable(VariableID id, Tensor<double> var){
+//    assert(var.shape == shape());
+    m_variables.insert({id, var});
+}
+
+
+//EnsembleForecastVariable EnsembleForecast::get_variable(VariableID id){
+//    Tensor<double> var = m_variables[id];
+//
+//    return EnsembleForecastVariable(id, var, m_times, m_realizations, m_lons, m_lats);
+//}

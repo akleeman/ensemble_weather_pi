@@ -1,4 +1,3 @@
-#include <tuple>
 #include <vector>
 #include <iostream>
 #include <cassert>
@@ -26,7 +25,7 @@ class Matrix
         _n = n;
       }
 
-      std::tuple<int, int> shape() const { return std::make_tuple(_m, _n); }
+      std::vector<int> shape() const { return {_m, _n}; }
 
       T get(const int i, const int j) { return _values[i + _m * j]; }
 

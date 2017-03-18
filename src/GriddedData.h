@@ -23,21 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * for each location and time.
  *
  *****************************************************************************/
-
-#include <tuple>
+#include <map>
 
 #include "GribRecord.h"
 #include "VectorUtilities.h"
 #include "Matrix.h"
-
-struct variable_t {
-  char* name;
-  char* units;
-  char* level;
-  zuint level_value;
-  zuchar level_type;
-  zuint source;
-};
+#include "Tensor.h"
+#include "Variables.h"
 
 
 void meshgrid(const std::vector<double> lons, std::vector<double> lats,
@@ -80,7 +72,7 @@ class GriddedVariable
         double get(int i, int j) { return m_values.get(i, j); }
 
         // Number of East-West then North-South points.
-        std::tuple<int, int> shape() const { return m_values.shape(); }
+        std::vector<int> shape() const { return m_values.shape(); }
 
         // Is a point within the extent of the grid?
         inline bool   contains_point(double lon, double lat) const;
@@ -122,18 +114,23 @@ class EnsembleForecastVariable
 {
     public:
 
+        EnsembleForecastVariable(VariableID id,
+                                 Tensor<double> data,
+                                 std::vector<time_t> time,
+                                 std::vector<int> realization,
+                                 Matrix<double> lons,
+                                 Matrix<double> lats);
+
         ForecastVariable get_realization(int i);
 
     protected:
 
-        time_t m_reference_time; // The time the forecast was produced
-        variable_t m_variable;
-
+        VariableID m_id;
         std::vector<int> m_realizations;
         std::vector<time_t> m_times; // An array of valid times
         Matrix<double> m_lons;
         Matrix<double> m_lats;
-        double ***data[];
+        Tensor<double> m_data;
 };
 
 
@@ -141,15 +138,22 @@ class EnsembleForecast
 {
     public:
 
-        EnsembleForecastVariable get_variable(std::string variable_name);
+        EnsembleForecast(std::vector<time_t> time,
+                         std::vector<int> realization,
+                         std::vector<double> lons,
+                         std::vector<double> lats);
+
+        std::vector<int> shape();
+
+        void add_variable(VariableID id, Tensor<double> var);
+
+        EnsembleForecastVariable get_variable(VariableID id);
 
     protected:
 
-        time_t m_reference_time; // The time the forecast was produced
-
-        std::vector<variable_t> m_variables;
-        std::vector<int> m_realization;
-        std::vector<time_t> m_time; // An array of valid times
+        std::map<VariableID, Tensor<double>> m_variables;
+        std::vector<int> m_realizations;
+        std::vector<time_t> m_times; // An array of valid times
         Matrix<double> m_lons;
         Matrix<double> m_lats;
 

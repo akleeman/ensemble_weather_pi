@@ -26,15 +26,6 @@ std::vector<double> direction_bins = {
                            15. * M_PI / 16.,
                           };
 
-variable_definition_t time_variable_def = {.name = "time",
-                                           .long_name = "Time (utc)",
-                                           .dims = {TIME_ID},
-                                           };
-
-variable_definition_t wind_variable_def = {.name = "wind",
-                                           .long_name = "Surface Wind",
-                                           .dims = {TIME_ID, REALIZATION_ID, LONGITUDE_ID, LATITUDE_ID},
-                                           };
 
 /*
  * Expands a sequence of packed 32 bit (4 byte) integers.
@@ -187,32 +178,24 @@ std::vector<int> expand_realization(std::string compressed){
 }
 
 
-double expand_wind(std::string compressed, std::vector<int> shape) {
+void expand_wind(std::string compressed, EnsembleForecast *fcst) {
+
+    std::vector<int> shape = fcst->shape();
+    assert(shape.size() == 4);
 
     int n = compressed.size() / 2;
 
     std::string compressed_speed = compressed.substr(0, n);
     std::vector<double> speed = expand_tiny_array(compressed_speed, wind_bins, shape);
+    Tensor<double> wind_speed(shape, &speed);
 
-    assert(shape.size() == 4);
-    std::cout << "about to build the data" << std::endl;
-//    std::vector<std::vector<std::vector<std::vector<double>>>> data(shape[0]);
-    double data[shape[0]][shape[1]][shape[2]][shape[3]];
+    fcst->add_variable(WIND_SPEED_ID, wind_speed);
 
-    for (int i = 0; i < shape[0]; i++){
-        for (int j = 0; j < shape[1]; j++){
-            for (int k = 0; k < shape[2]; k++){
-                for (int l = 0; l < shape[3]; l++){
-                  data[i][j][k][l] = speed[i +
-                                           shape[0] * j +
-                                           shape[1] * shape[0] * k +
-                                           shape[2] * shape[1] * shape[0] * l];
-                }
-            }
-        }
-    }
-    return data[0][0][0][0];
-//    return &data;
+    std::string compressed_direction = compressed.substr(n, compressed.size());
+    std::vector<double> dir = expand_tiny_direction(compressed_speed, shape);
+    Tensor<double> direction(shape, &dir);
+
+    fcst->add_variable(WIND_DIRECTION_ID, direction);
 }
 
 
@@ -356,13 +339,9 @@ EnsembleForecast read_slocum_forecast(std::string filename) {
 
     PRINT_DEBUG("About to parse the data");
 
-    std::vector<int> shape = {(int) times.size(),
-                              (int) realizations.size(),
-                              (int) lons.size(),
-                              (int) lats.size()};
-    expand_wind(variables[WIND_ID].payload, shape);
+    EnsembleForecast fcst(times, realizations, lons, lats);
 
-    EnsembleForecast var;
+    expand_wind(variables[WIND_ID].payload, &fcst);
 
-    return var;
+    return fcst;
 }

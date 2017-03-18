@@ -36,6 +36,7 @@ SET(SRC_ENSEMBLE_WEATHER
             src/GriddedData.cpp
             src/icons.cpp
             src/Matrix.cpp
+            src/Tensor.cpp
             src/TexFont.cpp
             src/WindCircle.cpp
             src/Utilities.cpp
