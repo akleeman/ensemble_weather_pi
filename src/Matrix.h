@@ -4,18 +4,19 @@
 
 #include "VectorUtilities.h"
 
+#ifndef _MATRIX_H_
+#define _MATRIX_H_
 
 template <typename T>
 class Matrix
 {
   public:
+
       Matrix(const int m = 0, const int n = 0, const std::vector<T> *data = nullptr){
         if (data != NULL){
           // data is an optional argument, if it's provided we use and
           // and make sure its size agrees with the dimensions m and n.
           _values = *data;
-          typename std::vector<T>::size_type expected_size = m * n;
-          assert(_values.size() == expected_size);
         } else {
           // otherwise we just create an empty vector and assume the user
           // is going to fill it in later.
@@ -23,11 +24,14 @@ class Matrix
         }
         _m = m;
         _n = n;
+        assert((int) _values.size() == _m * _n);
       }
 
       std::vector<int> shape() const { return {_m, _n}; }
 
-      T get(const int i, const int j) { return _values[i + _m * j]; }
+      T get(const int i, const int j) {
+          return _values[i + _m * j];
+      }
 
       void set(const int i, const int j, T v) { _values[i + _m * j] = v; }
 
@@ -52,3 +56,5 @@ class Matrix
       int _m;
       int _n;
 };
+
+#endif

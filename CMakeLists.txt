@@ -29,11 +29,11 @@ set(CMAKE_CXX_FLAGS -std=gnu++11)
 
 SET(SRC_ENSEMBLE_WEATHER
             src/Slocum.cpp
+            src/GriddedData.cpp
             src/ensemble_weather_pi.cpp
             src/EnsembleWeatherUI.cpp
             src/EnsembleWeatherManager.cpp
             src/GribRecord.cpp
-            src/GriddedData.cpp
             src/icons.cpp
             src/Matrix.cpp
             src/Tensor.cpp

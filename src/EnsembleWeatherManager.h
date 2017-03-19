@@ -3,9 +3,9 @@
 
 #include "wrdc.h"
 #include "ocpn_plugin.h"
+#include "Slocum.h"
 #include "WindCircle.h"
 #include "EnsembleWeatherUI.h"
-//#include "SlocumReader.h"
 
 
 class EnsembleWeatherManager : public EnsembleWeatherUI
@@ -18,7 +18,9 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
                            const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize( 389,62 ),
                            long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
-    : EnsembleWeatherUI(parent, id, title, pos, size, style) {};
+    : EnsembleWeatherUI(parent, id, title, pos, size, style) {
+        m_fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
+    };
 
     void OnOpenFile(wxCommandEvent& event);
 
@@ -29,5 +31,7 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
     void Render(wrDC &wrdc, PlugIn_ViewPort &vp);
 
   private:
+
+    EnsembleForecast m_fcst;
     WindCircleFactory m_wind_circle_factory;
 };

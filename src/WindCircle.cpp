@@ -21,21 +21,48 @@ WindCircleFactory::WindCircleFactory()
 }
 
 
-bool WindCircleFactory::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
+void WindCircleFactory::RenderOneCircle(wxPoint center, double angle_from, wxColor color,
+                                        double radius,
+                                        wrDC &wrdc, PlugIn_ViewPort &vp) {
+
+    wxBrush brush(m_circle_fill, wxALPHA_OPAQUE);
+    wrdc.SetBrush(brush);
+
+    wrdc.DrawCircle(center.x, center.y, 10.);
+
+    wxBrush arc_brush(color, wxALPHA_OPAQUE);
+    wrdc.SetBrush(arc_brush);
+
+    wrdc.DrawEllipticArc(center.x, center.y,
+                         2 * radius, 2 * radius,
+                         angle_from - 11., angle_from + 11.);
+}
+
+
+
+bool WindCircleFactory::Render(wrDC &wrdc, PlugIn_ViewPort &vp, EnsembleForecast &fcst){
+
+    auto wind_speed = fcst.get_variable(WIND_SPEED_ID);
+    auto wind_direction = fcst.get_variable(WIND_DIRECTION_ID);
+    Tensor<double> dir = wind_direction.get_data();
+    Tensor<double> speed = wind_speed.get_data();
+
+    auto lons = wind_speed.get_lons();
+    auto lats = wind_speed.get_lats();
 
     wxPoint pl;
-    for (int i=0; i <= 12; i++){
-      GetCanvasPixLL(&vp, &pl, (float) -3 * i, 0.);
+    std::cout << lons->shape()[0] << " : " << lons->shape()[1] << std::endl;
+    for (int i=0; i <= lons->shape()[0]; i++){
+        for (int j=0; j <= lons->shape()[1]; j++){
 
-      wxBrush brush(m_circle_fill, wxALPHA_OPAQUE);
-      wrdc.SetBrush(brush);
+            float lat = lats->get(i, j);
+            float lon = lons->get(i, j);
 
-      wrdc.DrawCircle(pl.x, pl.y, 10.);
+            GetCanvasPixLL(&vp, &pl, lat, lon);
 
-      wxBrush arc_brush(m_wind_colors[i], wxALPHA_OPAQUE);
-      wrdc.SetBrush(arc_brush);
+            RenderOneCircle(pl, 45., m_wind_colors[0], 10., wrdc, vp);
 
-      wrdc.DrawEllipticArc(pl.x, pl.y, 2 * 10., 2 * 10., 30. * i, 30. * (i + 1));
+        }
     }
     return true;
 }

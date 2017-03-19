@@ -13,7 +13,7 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
       glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
   }
 
-  m_wind_circle_factory.Render(wrdc, vp);
+  m_wind_circle_factory.Render(wrdc, vp, m_fcst);
 
   if(!wrdc.GetDC())
       glPopAttrib();

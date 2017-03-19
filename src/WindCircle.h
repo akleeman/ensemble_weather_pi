@@ -10,23 +10,26 @@
 
 #include "wrdc.h"
 #include "ocpn_plugin.h"
+#include "GriddedData.h"
 
 class PlugIn_ViewPort;
-
+class EnsembleForecast;
 
 class WindCircleFactory {
 public:
 
     WindCircleFactory();
-    bool Render(wrDC &wrdc, PlugIn_ViewPort &vp);
+
+    bool Render(wrDC &wrdc, PlugIn_ViewPort &vp, EnsembleForecast &fcst);
+
+    void RenderOneCircle(wxPoint center, double angle_from, wxColor color,
+                         double radius, wrDC &wrdc, PlugIn_ViewPort &vp);
+
     void Reset() {};
+
     void ClearCached() {};
 
 private:
-
-//    bool render_gl_grib_overlay(wxGLContext *pcontext, PlugIn_ViewPort *vp);
-//    bool render_grib_overlay(wxDC &dc, PlugIn_ViewPort *vp);
-//    void render_circles();
 
     wxColour m_circle_fill;
     wxColour m_wind_colors[13];

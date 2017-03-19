@@ -3,9 +3,15 @@
 
 
 TEST(slocum, test_read_file) {
-
-    auto test_t = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
-
+//    auto fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
+//    auto wind_speed = fcst.get_variable(WIND_SPEED_ID);
+//    auto lons = wind_speed.get_lons();
+//
+//    std::cout << "About to access lons" << std::endl;
+//
+//    std::cout << lons.get(0, 0) << std::endl;
+//
+//    std::cout << "Just accessed lons" << std::endl;
 }
 
 TEST(slocum, test_unpack_ints) {

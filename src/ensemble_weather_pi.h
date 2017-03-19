@@ -81,7 +81,6 @@ std::cout << x << std::endl; } while (0)
 #include "wx/jsonwriter.h"
 
 #include "icons.h"
-#include "Slocum.h"
 #include "Utilities.h"
 #include "EnsembleWeatherManager.h"
 

@@ -111,21 +111,6 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
 }
 
 
-//EnsembleForecastVariable::EnsembleForecastVariable(VariableID id,
-//                                                   Tensor<double> data,
-//                                                   std::vector<time_t> time,
-//                                                   std::vector<int> realization,
-//                                                   Matrix<double> lons,
-//                                                   Matrix<double> lats){
-//    m_id = id;
-//    m_data = data;
-//    m_times = time;
-//    m_realizations = realization;
-//    m_lons = lons;
-//    m_lats = lats;
-//}
-
-
 EnsembleForecast::EnsembleForecast(std::vector<time_t> time,
                                    std::vector<int> realization,
                                    std::vector<double> lons,
@@ -133,6 +118,9 @@ EnsembleForecast::EnsembleForecast(std::vector<time_t> time,
     m_times = time;
     m_realizations = realization;
     meshgrid(lons, lats, &m_lons, &m_lats);
+    for (int i = 0; i < 3; i++) {
+      std::cout << "EnsembleForecast init" << m_lons.get(i, i) << std::endl;
+    }
 }
 
 
@@ -145,13 +133,15 @@ std::vector<int> EnsembleForecast::shape(){
 
 
 void EnsembleForecast::add_variable(VariableID id, Tensor<double> var){
-//    assert(var.shape == shape());
     m_variables.insert({id, var});
 }
 
 
-//EnsembleForecastVariable EnsembleForecast::get_variable(VariableID id){
-//    Tensor<double> var = m_variables[id];
-//
-//    return EnsembleForecastVariable(id, var, m_times, m_realizations, m_lons, m_lats);
-//}
+EnsembleForecastVariable EnsembleForecast::get_variable(VariableID id){
+    Tensor<double> var = m_variables[id];
+    for (int i = 0; i < 3; i++) {
+      std::cout << "EnsembleForecast get_variable" << m_lons.get(i, i) << std::endl;
+    }
+    return EnsembleForecastVariable(id, var, &m_times, &m_realizations,
+                                    &m_lons, &m_lats);
+}

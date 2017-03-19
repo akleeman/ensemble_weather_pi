@@ -24,6 +24,35 @@ TEST(matrix, test_constructors) {
 }
 
 
+TEST(matrix, test_copy) {
+  // Test with data that already exists.
+  std::vector<double> data(12);
+  data[0] = 1.;
+  data[1] = 2.;
+  data[3] = 3.;
+  Matrix<double> mat(3, 4, &data);
+
+  // Make sure the correct data is retrieved
+  ASSERT_EQ(mat.get(0, 0), 1.);
+  ASSERT_EQ(mat.get(1, 0), 2.);
+  ASSERT_EQ(mat.get(0, 1), 3.);
+
+  Matrix<double> copy = mat;
+
+  // Make sure the correct data is retrieved
+  ASSERT_EQ(copy.get(0, 0), 1.);
+  ASSERT_EQ(copy.get(1, 0), 2.);
+  ASSERT_EQ(copy.get(0, 1), 3.);
+
+  Matrix<double> another_copy(mat);
+
+  // Make sure the correct data is retrieved
+  ASSERT_EQ(another_copy.get(0, 0), 1.);
+  ASSERT_EQ(another_copy.get(1, 0), 2.);
+  ASSERT_EQ(another_copy.get(0, 1), 3.);
+}
+
+
 int multiply(int i, int j) {
   return i * j;
 }

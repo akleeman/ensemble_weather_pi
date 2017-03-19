@@ -2,10 +2,16 @@
 #include <iostream>
 #include <cassert>
 
+#ifndef _TENSOR_H_
+#define _TENSOR_H_
+
 template <typename T>
 class Tensor
 {
   public:
+
+      Tensor() {};
+
       Tensor(const std::vector<int> shape, const std::vector<T> *data = nullptr){
 
         typename std::vector<T>::size_type expected_size = 1;
@@ -51,3 +57,5 @@ class Tensor
       std::vector<T> _values;
       std::vector<int> _shape;
 };
+
+#endif
