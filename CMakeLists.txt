@@ -41,6 +41,7 @@ SET(SRC_ENSEMBLE_WEATHER
             src/WindCircle.cpp
             src/Utilities.cpp
             src/VectorUtilities.cpp
+            src/Variables.cpp
             src/wrdc.cpp
             src/zuFile.cpp
 )

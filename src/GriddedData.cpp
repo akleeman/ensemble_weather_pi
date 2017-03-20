@@ -118,9 +118,11 @@ EnsembleForecast::EnsembleForecast(std::vector<time_t> time,
     m_times = time;
     m_realizations = realization;
     meshgrid(lons, lats, &m_lons, &m_lats);
-    for (int i = 0; i < 3; i++) {
-      std::cout << "EnsembleForecast init" << m_lons.get(i, i) << std::endl;
-    }
+}
+
+
+bool EnsembleForecast::is_empty(){
+    return m_times.empty();
 }
 
 
@@ -138,10 +140,6 @@ void EnsembleForecast::add_variable(VariableID id, Tensor<double> var){
 
 
 EnsembleForecastVariable EnsembleForecast::get_variable(VariableID id){
-    Tensor<double> var = m_variables[id];
-    for (int i = 0; i < 3; i++) {
-      std::cout << "EnsembleForecast get_variable" << m_lons.get(i, i) << std::endl;
-    }
-    return EnsembleForecastVariable(id, var, &m_times, &m_realizations,
+    return EnsembleForecastVariable(id, &m_variables[id], &m_times, &m_realizations,
                                     &m_lons, &m_lats);
 }

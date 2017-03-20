@@ -117,16 +117,16 @@ class EnsembleForecastVariable
     protected:
 
         VariableID m_id;
-        Tensor<double> m_data;
         std::vector<time_t> *m_times; // An array of valid times
         std::vector<int> *m_realizations;
         Matrix<double> *m_lons;
         Matrix<double> *m_lats;
 
     public:
+        Tensor<double> *m_data;
 
         EnsembleForecastVariable(VariableID id,
-                                 Tensor<double> &data,
+                                 Tensor<double> *data,
                                  std::vector<time_t> *time,
                                  std::vector<int> *realization,
                                  Matrix<double> *lons,
@@ -140,7 +140,7 @@ class EnsembleForecastVariable
         };
 
         Tensor<double> get_data() {
-            return m_data;
+            return *m_data;
         }
 
         Matrix<double>* get_lons() {
@@ -160,14 +160,16 @@ class EnsembleForecast
     protected:
 
         std::map<VariableID, Tensor<double>> m_variables;
-        std::vector<int> m_realizations;
         std::vector<time_t> m_times; // An array of valid times
+        std::vector<int> m_realizations;
         Matrix<double> m_lons;
         Matrix<double> m_lats;
 
     public:
 
         EnsembleForecast() {};
+
+        bool is_empty();
 
         EnsembleForecast(std::vector<time_t> time,
                          std::vector<int> realization,
@@ -180,6 +182,9 @@ class EnsembleForecast
 
         EnsembleForecastVariable get_variable(VariableID id);
 
+        std::vector<time_t> get_times() {
+            return m_times;
+        }
 };
 
 #endif

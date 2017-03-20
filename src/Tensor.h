@@ -29,6 +29,21 @@ class Tensor
           _values = std::vector<T>(expected_size);
         }
         _shape = shape;
+
+        build_index_multiplier();
+      }
+
+      void build_index_multiplier() {
+        //  Here we build the index multiplier which is used when we ask for
+        //  the value at some index.  If we're dealing with an (m, n, p)
+        //  shaped tensor the index for a value {i, j, k} would be:
+        //    (n * p) * i + p * j + k
+        _index_multiplier.resize(_shape.size());
+        int mult = 1;
+        for (uint j = _shape.size(); j > 0; j--){
+          _index_multiplier[j - 1] = mult;
+          mult *= _shape[j - 1];
+        }
       }
 
       std::vector<int> shape() const { return _shape; }
@@ -36,11 +51,7 @@ class Tensor
       int get_index(std::vector<int> indexer) {
         int idx = 0;
         for (typename std::vector<int>::size_type i = 0; i < _shape.size(); i++){
-            int mult = 1;
-            for (typename std::vector<int>::size_type j = 0; j < i; j++) {
-                mult *= _shape[j];
-            }
-            idx += mult * indexer[i];
+            idx += _index_multiplier[i] * indexer[i];
         }
         return idx;
       }
@@ -53,9 +64,11 @@ class Tensor
         _values[get_index(indexer)] = v;
       }
 
-  protected:
       std::vector<T> _values;
+
+  protected:
       std::vector<int> _shape;
+      std::vector<int> _index_multiplier;
 };
 
 #endif

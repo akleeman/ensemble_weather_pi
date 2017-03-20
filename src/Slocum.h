@@ -7,6 +7,7 @@
 #include <ctime>
 
 #include "zlib.h"
+#include "Variables.h"
 #include "GriddedData.h"
 
 #define DEBUG true

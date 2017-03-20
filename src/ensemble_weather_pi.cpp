@@ -117,7 +117,7 @@ int ensemble_weather_pi::Init(void)
               WANTS_CONFIG              |
               WANTS_CURSOR_LATLON       |
               WANTS_NMEA_EVENTS         |
-              WANTS_MOUSE_EVENTS        |
+//              WANTS_MOUSE_EVENTS        |
               WANTS_PLUGIN_MESSAGING
             );
 }

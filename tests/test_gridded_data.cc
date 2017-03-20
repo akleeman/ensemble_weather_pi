@@ -34,15 +34,24 @@ EnsembleForecast make_test_forecast() {
   EnsembleForecast fcst(times, realization, lons, lats);
 
   std::vector<int> shape = fcst.shape();
-//  int size = 1;
-//  for (uint i=0; i < shape.size(); i++){
-//    size *= shape[i];
-//  }
 
-  Tensor<double> wind_speed(shape);
+  int size = 1;
+  for (uint i = 0; i < shape.size(); i++) {
+    size *= shape[i];
+  }
+
+  std::vector<double> speeds;
+  std::vector<double> dirs;
+  for (int i=0; i<size; i++) {
+      speeds.push_back((float) i);
+      dirs.push_back((float) i);
+  }
+
+  Tensor<double> wind_speed(shape, &speeds);
+
   fcst.add_variable(WIND_SPEED_ID, wind_speed);
 
-  Tensor<double> wind_direction(shape);
+  Tensor<double> wind_direction(shape, &dirs);
   fcst.add_variable(WIND_DIRECTION_ID, wind_direction);
 
   return fcst;
@@ -72,6 +81,9 @@ TEST(gridded_data, test_data_access){
 
   auto lons = wind_speed.get_lons();
   EXPECT_DOUBLE_EQ(lons->get(2, 1), -120.);
+
+  auto speeds = wind_speed.get_data();
+  speeds.get({1, 1, 1, 1});
 
 }
 

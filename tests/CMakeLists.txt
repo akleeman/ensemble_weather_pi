@@ -23,16 +23,17 @@ if (test)
       ../src/GriddedData.cpp
       ../src/Slocum.cpp
       ../src/Tensor.cpp
+      ../src/Variables.cpp
       )
   
   ADD_LIBRARY(ensemble_weather_pi_utils SHARED ${UTILS_SRC})
   
   add_executable(unit_tests
-    test_matrix.cc
     test_vector_utils.cc
+    test_tensor.cc
+    test_matrix.cc
     test_gridded_data.cc
     test_slocum.cc
-    test_tensor.cc
     )
   
   

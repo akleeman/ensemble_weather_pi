@@ -1,31 +1,5 @@
 #include "Slocum.h"
 
-// wind is rounded to the nearest Beaufort Force.
-std::vector<double> wind_bins = {0., 1., 3., 6., 10., 16., 21.,
-                                 27., 33., 40., 47., 55., 63., 75.};
-
-// Directions are stored in PI / 8 increments which let's
-// us hold them in a 4 bit integer.  Note that these are
-// the bin's edges.
-std::vector<double> direction_bins = {
-                           -15. * M_PI / 16.,
-                           -13. * M_PI / 16.,
-                           -11. * M_PI / 16.,
-                           -9. * M_PI / 16.,
-                           -7. * M_PI / 16.,
-                           -5. * M_PI / 16.,
-                           -3. * M_PI / 16.,
-                           -M_PI / 16.,
-                           M_PI / 16.,
-                           3. * M_PI / 16.,
-                           5. * M_PI / 16.,
-                           7. * M_PI / 16.,
-                           9. * M_PI / 16.,
-                           11. * M_PI / 16.,
-                           13. * M_PI / 16.,
-                           15. * M_PI / 16.,
-                          };
-
 
 /*
  * Expands a sequence of packed 32 bit (4 byte) integers.
@@ -132,7 +106,8 @@ std::vector<double> expand_tiny_array(std::string compressed,
 
 std::vector<double> expand_tiny_direction(std::string compressed,
                                           std::vector<int> shape){
-    return expand_tiny_array(compressed, direction_bins, shape, true, -M_PI);
+    return expand_tiny_array(compressed, get_direction_bins(),
+                             shape, true, -M_PI);
 }
 
 
@@ -186,13 +161,14 @@ void expand_wind(std::string compressed, EnsembleForecast *fcst) {
     int n = compressed.size() / 2;
 
     std::string compressed_speed = compressed.substr(0, n);
-    std::vector<double> speed = expand_tiny_array(compressed_speed, wind_bins, shape);
+    std::vector<double> speed = expand_tiny_array(compressed_speed,
+                                                  get_wind_bins(), shape);
     Tensor<double> wind_speed(shape, &speed);
 
     fcst->add_variable(WIND_SPEED_ID, wind_speed);
 
     std::string compressed_direction = compressed.substr(n, compressed.size());
-    std::vector<double> dir = expand_tiny_direction(compressed_speed, shape);
+    std::vector<double> dir = expand_tiny_direction(compressed_direction, shape);
     Tensor<double> direction(shape, &dir);
 
     fcst->add_variable(WIND_DIRECTION_ID, direction);

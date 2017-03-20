@@ -11,6 +11,8 @@
 #include "wrdc.h"
 #include "ocpn_plugin.h"
 #include "GriddedData.h"
+#include "VectorUtilities.h"
+#include "Slocum.h"
 
 class PlugIn_ViewPort;
 class EnsembleForecast;
@@ -20,10 +22,17 @@ public:
 
     WindCircleFactory();
 
-    bool Render(wrDC &wrdc, PlugIn_ViewPort &vp, EnsembleForecast &fcst);
+    bool Render(wrDC &wrdc, PlugIn_ViewPort &vp, EnsembleForecast *fcst, int time_idx);
 
-    void RenderOneCircle(wxPoint center, double angle_from, wxColor color,
-                         double radius, wrDC &wrdc, PlugIn_ViewPort &vp);
+    void RenderWindTriangle(wxPoint center,
+                            double speed,
+                            double direction,
+                            double radius,
+                            wrDC &wrdc, PlugIn_ViewPort &vp);
+
+    void RenderBackgroundCircle(wxPoint center,
+                                double radius,
+                                wrDC &wrdc, PlugIn_ViewPort &vp);
 
     void Reset() {};
 
@@ -33,4 +42,5 @@ private:
 
     wxColour m_circle_fill;
     wxColour m_wind_colors[13];
+    std::vector<double> m_wind_bins;
 };

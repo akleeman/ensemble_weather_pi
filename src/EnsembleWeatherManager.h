@@ -19,10 +19,16 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
                            const wxSize& size = wxSize( 389,62 ),
                            long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
     : EnsembleWeatherUI(parent, id, title, pos, size, style) {
-        m_fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
+//        m_fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
+        m_fcst = read_slocum_forecast("/home/kleeman/Desktop/gridded_gefs_2017-03-18_1103.fcst");
+        m_time_index = 0;
     };
 
     void OnOpenFile(wxCommandEvent& event);
+
+    void OnPrevTimeClick(wxCommandEvent& event);
+
+    void OnNextTimeClick(wxCommandEvent& event);
 
     void OnPaintSpot(wxPaintEvent& event);
 
@@ -30,8 +36,9 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
 
     void Render(wrDC &wrdc, PlugIn_ViewPort &vp);
 
-  private:
-
+    int m_time_index;
     EnsembleForecast m_fcst;
+
+  private:
     WindCircleFactory m_wind_circle_factory;
 };

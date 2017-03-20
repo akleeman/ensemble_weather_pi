@@ -3,15 +3,27 @@
 
 
 TEST(slocum, test_read_file) {
-//    auto fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
-//    auto wind_speed = fcst.get_variable(WIND_SPEED_ID);
-//    auto lons = wind_speed.get_lons();
-//
-//    std::cout << "About to access lons" << std::endl;
-//
-//    std::cout << lons.get(0, 0) << std::endl;
-//
-//    std::cout << "Just accessed lons" << std::endl;
+    auto fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
+
+    auto wind_speed = fcst.get_variable(WIND_SPEED_ID);
+    auto wind_direction = fcst.get_variable(WIND_DIRECTION_ID);
+
+    //spot check some of the values
+    Tensor<double> dir = wind_direction.get_data();
+    EXPECT_DOUBLE_EQ(2.748893571891069, dir.get({13, 11, 15, 12}));
+    EXPECT_DOUBLE_EQ(2.3561944901923448, dir.get({1, 9, 3, 5}));
+
+    Tensor<double> speed = wind_speed.get_data();
+    EXPECT_DOUBLE_EQ(8., speed.get({13, 11, 15, 12}));
+    EXPECT_DOUBLE_EQ(24., speed.get({1, 9, 3, 5}));
+
+    Matrix<double> *lons = wind_speed.get_lons();
+    EXPECT_DOUBLE_EQ(lons->get(3, 0), 3.);
+    EXPECT_DOUBLE_EQ(lons->get(3, 3), 3.);
+
+    Matrix<double> *lats = wind_speed.get_lats();
+    EXPECT_DOUBLE_EQ(lats->get(3, 1), -29.);
+    EXPECT_DOUBLE_EQ(lats->get(0, 1), -29.);
 }
 
 TEST(slocum, test_unpack_ints) {
