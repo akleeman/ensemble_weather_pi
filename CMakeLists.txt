@@ -41,9 +41,10 @@ SET(SRC_ENSEMBLE_WEATHER
             src/WindCircle.cpp
             src/Utilities.cpp
             src/VectorUtilities.cpp
-            src/Variables.cpp
+            src/Common.cpp
             src/wrdc.cpp
             src/zuFile.cpp
+            src/SpotPlot.cpp
 )
 
 IF(WIN32)

@@ -98,3 +98,57 @@ TEST(slocum, test_expand_time) {
         EXPECT_EQ(one_time, out[i]);
     }
 }
+
+
+TEST(slocum, test_values_to_bins) {
+
+  std::vector<double> bin_divs = {-1., 0., 1., 2., 3.14159, 5.};
+
+  Matrix<double> values(2, 2);
+  values.set(0, 0, 0.5);
+  values.set(0, 1, 3.);
+  values.set(1, 0, -2.);
+  values.set(1, 1, 5.);
+
+  Matrix<int> bins = values_to_bins(values, bin_divs);
+
+  EXPECT_EQ(bins.get(0, 0), 2);
+  EXPECT_EQ(bins.get(0, 1), 4);
+  EXPECT_EQ(bins.get(1, 0), 0);
+  EXPECT_EQ(bins.get(1, 1), 5);
+}
+
+
+TEST(slocum, test_bins_to_probabilities) {
+  std::vector<int> bins = {2, 1, 0, 1, 1, 4};
+
+  std::vector<double> probs = bins_to_probabilities(bins, 5);
+
+  double sum = 0.;
+  for (uint i=0; i<probs.size(); i++) {
+      sum += probs[i];
+  }
+
+  EXPECT_DOUBLE_EQ(sum, 1.);
+}
+
+
+TEST(slocum, test_binned_probabilities) {
+  auto fcst = read_slocum_forecast("/home/kleeman/dev/slocum/queries/east_atlantic_query.fcst");
+  SpotForecast spot = fcst.get_spot(1, 1);
+
+  auto wind_speed = spot.get_variable(WIND_SPEED_ID);
+  auto wind_direction = spot.get_variable(WIND_DIRECTION_ID);
+
+  Matrix<double> *speed = wind_speed.get_data();
+  Matrix<double> probs = binned_probabilities(*speed, wind_bins);
+
+  double sum;
+  for (int i=0; i<probs.shape()[0]; i++) {
+      sum = 0.;
+      for (int j=0; j<probs.shape()[1]; j++) {
+          sum += probs.get(i, j);
+      }
+      EXPECT_DOUBLE_EQ(sum, 1.);
+  }
+}

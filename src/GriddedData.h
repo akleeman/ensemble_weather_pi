@@ -25,11 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *****************************************************************************/
 #include <map>
 
+#include "Common.h"
 #include "GribRecord.h"
 #include "VectorUtilities.h"
 #include "Matrix.h"
 #include "Tensor.h"
-#include "Variables.h"
 
 #ifndef _GRIDDED_DATA_H_
 #define _GRIDDED_DATA_H_
@@ -93,21 +93,50 @@ class GriddedVariable
 };
 
 
-class ForecastVariable
+class SpotVariable
 {
-   public:
+    protected:
 
-       GriddedVariable get_time(time_t t);
+        double m_lon;
+        double m_lat;
+        std::vector<time_t> *m_times;
+        std::vector<int> *m_realizations;
+        Matrix<double> m_data;
 
-   protected:
+    public:
+        SpotVariable(double lon, double lat,
+                     std::vector<time_t> *times,
+                     std::vector<int> *realizations,
+                     Matrix<double> data):
+            m_lon(lon), m_lat(lat), m_times(times),
+            m_realizations(realizations), m_data(data) {};
 
-       time_t m_reference_time; // The time the forecast was produced
-       variable_t m_variable;
-       int m_realization;
+        Matrix<double> *get_data() {
+            return &m_data;
+        }
+};
 
-       std::vector<time_t> m_times; // An array of valid times
-       Matrix<double> m_lons;
-       Matrix<double> m_lats;
+
+class SpotForecast
+{
+ protected:
+
+     double m_lon;
+     double m_lat;
+     std::vector<time_t> *m_times;
+     std::vector<int> *m_realizations;
+     std::map<VariableID, Matrix<double>> m_variables;
+
+ public:
+     SpotForecast(double lon, double lat,
+                  std::vector<time_t> *times,
+                  std::vector<int> *realizations,
+                  std::map<VariableID, Matrix<double>> variables):
+         m_lon(lon), m_lat(lat), m_times(times),
+         m_realizations(realizations),
+         m_variables(variables) {};
+
+     SpotVariable get_variable(VariableID id);
 
 };
 
@@ -150,8 +179,6 @@ class EnsembleForecastVariable
         Matrix<double>* get_lats() {
             return m_lats;
         }
-
-        ForecastVariable get_realization(int i);
 };
 
 
@@ -182,8 +209,18 @@ class EnsembleForecast
 
         EnsembleForecastVariable get_variable(VariableID id);
 
+        SpotForecast get_spot(int lon_ind, int lat_ind);
+
         std::vector<time_t> get_times() {
             return m_times;
+        }
+
+        Matrix<double>* get_lons() {
+            return &m_lons;
+        }
+
+        Matrix<double>* get_lats() {
+            return &m_lats;
         }
 };
 

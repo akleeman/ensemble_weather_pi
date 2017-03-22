@@ -117,7 +117,7 @@ int ensemble_weather_pi::Init(void)
               WANTS_CONFIG              |
               WANTS_CURSOR_LATLON       |
               WANTS_NMEA_EVENTS         |
-//              WANTS_MOUSE_EVENTS        |
+              WANTS_MOUSE_EVENTS        |
               WANTS_PLUGIN_MESSAGING
             );
 }
@@ -194,10 +194,13 @@ void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
 }
 
 bool ensemble_weather_pi::MouseEventHook(wxMouseEvent &event){
-    if (event.LeftDown()) {
-      std::cout << "Mouse Event! " << event.LeftDown() << std::endl;
+    if (event.LeftDClick()) {
+        m_manager->OnChartDoubleClick(event);
+        RequestRefresh(m_parent_window);
+        return true;
+    } else {
+        return false;
     }
-    return true;
 }
 
 void ensemble_weather_pi::SetPluginMessage(wxString &message_id, wxString &message_body)

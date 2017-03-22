@@ -111,6 +111,12 @@ GriddedVariable::GriddedVariable(const Matrix<double> *lons,
 }
 
 
+
+SpotVariable SpotForecast::get_variable(VariableID id){
+    return SpotVariable(m_lon, m_lat, m_times, m_realizations, m_variables[id]);
+}
+
+
 EnsembleForecast::EnsembleForecast(std::vector<time_t> time,
                                    std::vector<int> realization,
                                    std::vector<double> lons,
@@ -136,6 +142,30 @@ std::vector<int> EnsembleForecast::shape(){
 
 void EnsembleForecast::add_variable(VariableID id, Tensor<double> var){
     m_variables.insert({id, var});
+}
+
+
+SpotForecast EnsembleForecast::get_spot(int lon_ind, int lat_ind){
+    std::map<VariableID, Matrix<double>> spot_variables;
+
+    int n_times = m_times.size();
+    int n_realizations = m_realizations.size();
+    for (auto it=m_variables.begin(); it!=m_variables.end(); ++it){
+
+        Matrix<double> data({n_times, n_realizations});
+        for (int i=0; i<n_times; i++){
+            for (int j=0; j<n_realizations; j++){
+                data.set(i, j, it->second.get({i, j, lon_ind, lat_ind}));
+            }
+        }
+
+      spot_variables[it->first] = data;
+    }
+    SpotForecast spot(m_lons.get(lon_ind, lat_ind),
+                      m_lats.get(lon_ind, lat_ind),
+                      &m_times, &m_realizations,
+                      spot_variables);
+    return spot;
 }
 
 

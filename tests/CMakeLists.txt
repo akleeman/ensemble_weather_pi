@@ -14,7 +14,7 @@ if (test)
   include_directories("${PROJECT_SOURCE_DIR}/src")
   
   # Enable errors for warnings after gtest is built
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -fexceptions -frtti")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions -frtti")
   set("LOG_LEVEL=8")
   
   SET(UTILS_SRC
@@ -23,20 +23,22 @@ if (test)
       ../src/GriddedData.cpp
       ../src/Slocum.cpp
       ../src/Tensor.cpp
-      ../src/Variables.cpp
+      ../src/Common.cpp
       )
   
   ADD_LIBRARY(ensemble_weather_pi_utils SHARED ${UTILS_SRC})
+
+  FIND_PACKAGE(wxWidgets REQUIRED)
+  TARGET_LINK_LIBRARIES( ensemble_weather_pi_utils ${wxWidgets_LIBRARIES})  
   
   add_executable(unit_tests
+    test_slocum.cc
     test_vector_utils.cc
     test_tensor.cc
     test_matrix.cc
     test_gridded_data.cc
-    test_slocum.cc
     )
-  
-  
+ 
   FIND_PACKAGE(ZLIB REQUIRED)
   INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
   

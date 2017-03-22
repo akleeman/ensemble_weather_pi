@@ -8,6 +8,7 @@
 #include <wx/graphics.h>
 #include <wx/progdlg.h>
 
+#include <cmath>
 #include "wrdc.h"
 #include "ocpn_plugin.h"
 #include "GriddedData.h"
@@ -17,12 +18,15 @@
 class PlugIn_ViewPort;
 class EnsembleForecast;
 
+
 class WindCircleFactory {
 public:
 
     WindCircleFactory();
 
-    bool Render(wrDC &wrdc, PlugIn_ViewPort &vp, EnsembleForecast *fcst, int time_idx);
+    bool RenderGriddedForecast(wrDC &wrdc, PlugIn_ViewPort &vp,
+                               EnsembleForecast *fcst, int time_idx,
+                               int lon_idx, int lat_idx);
 
     void RenderWindTriangle(wxPoint center,
                             double speed,
@@ -41,6 +45,4 @@ public:
 private:
 
     wxColour m_circle_fill;
-    wxColour m_wind_colors[13];
-    std::vector<double> m_wind_bins;
 };

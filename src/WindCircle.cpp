@@ -2,25 +2,34 @@
 #include "WindCircle.h"
 
 
-WindCircleFactory::WindCircleFactory()
-      : m_circle_fill(255, 255, 255, 110)  // Each wind circle is a semi-transparent white fill.
-{
-    m_wind_colors[0].Set("#d7d7d7"); // light grey
-    m_wind_colors[1].Set("#a1eeff"); // lightest blue
-    m_wind_colors[2].Set("#42b1e5"); //light blue
-    m_wind_colors[3].Set("#4277e5"); //pastel blue
-    m_wind_colors[4].Set("#60fd4b"); //green
-    m_wind_colors[5].Set("#1cea00"); //yellow-green
-    m_wind_colors[6].Set("#fbef36"); //yellow
-    m_wind_colors[7].Set("#fbc136"); //orange
-    m_wind_colors[8].Set("#ff4f02"); //red
-    m_wind_colors[9].Set("#d50c02"); //darker-red
-    m_wind_colors[10].Set("#ff00c0"); //red-purple
-    m_wind_colors[11].Set("#b30d8a"); //dark purple
-    m_wind_colors[12].Set("#000000"); //black
+void get_bounding_box(PlugIn_ViewPort &vp,
+                      Matrix<double> *lons,
+                      Matrix<double> *lats,
+                      wxPoint *ll, wxPoint *ur){
 
-    m_wind_bins = get_wind_bins();
+    wxPoint p;
+
+    assert(lons->shape() == lats->shape());
+
+    ll->x = vp.pix_width;
+    ur->x = 0;
+    ll->y = vp.pix_height;
+    ur->y = 0;
+
+    for (int i=0; i<lons->shape()[0]; i++){
+        for (int j=0; j<lons->shape()[1]; j++){
+            GetCanvasPixLL(&vp, &p, lats->get(i, j), lons->get(i, j));
+            if (p.x < ll->x) ll->x = p.x;
+            if (p.y < ll->y) ll->y = p.y;
+            if (p.x > ur->x) ur->x = p.x;
+            if (p.y > ur->y) ur->y = p.y;
+        }
+    }
 }
+
+WindCircleFactory::WindCircleFactory()
+      : m_circle_fill(255, 255, 255, 80)  // Each wind circle is a semi-transparent white fill.
+{};
 
 
 void WindCircleFactory::RenderBackgroundCircle(wxPoint center,
@@ -42,10 +51,9 @@ void WindCircleFactory::RenderWindTriangle(wxPoint center,
 
     double dir_ccw_from_east = 90. - 180 * direction / M_PI;
 
-    int bin = bisect(m_wind_bins, speed);
-    wxColor color = m_wind_colors[bin];
+    int bin = bisect(wind_bins, speed);
     // Set the brush color for the given wind speed.
-    wxBrush arc_brush(color, wxALPHA_OPAQUE);
+    wxBrush arc_brush(wind_colors[bin], wxALPHA_OPAQUE);
     wrdc.SetBrush(arc_brush);
 
     wrdc.DrawEllipticArc(center.x, center.y,
@@ -55,8 +63,9 @@ void WindCircleFactory::RenderWindTriangle(wxPoint center,
 }
 
 
-bool WindCircleFactory::Render(wrDC &wrdc, PlugIn_ViewPort &vp,
-                               EnsembleForecast *fcst, int time_idx){
+bool WindCircleFactory::RenderGriddedForecast(wrDC &wrdc, PlugIn_ViewPort &vp,
+                                              EnsembleForecast *fcst,
+                                              int time_idx, int lon_idx, int lat_idx){
 
     auto wind_speed = fcst->get_variable(WIND_SPEED_ID);
     auto wind_direction = fcst->get_variable(WIND_DIRECTION_ID);
@@ -67,26 +76,53 @@ bool WindCircleFactory::Render(wrDC &wrdc, PlugIn_ViewPort &vp,
     auto lons = wind_speed.get_lons();
     auto lats = wind_speed.get_lats();
 
-    double radius = 20.;
+    // Determine which radius to use by looking at the bouding box
+    // of the visible forecast area.
+    wxPoint ll, ur;
+    get_bounding_box(vp, lons, lats, &ll, &ur);
+    int visible_width = std::min(ur.x, vp.pix_width) - std::max(ll.x, 0);
+    int visible_height = std::min(ur.y, vp.pix_height) - std::max(ll.y, 0);
+
+    // TODO: perhaps here we should only be using the number of visible
+    // longitudes and latitudes
+    double x_radius = 0.3846 * visible_width / (float) lons->shape()[0];
+    double y_radius = 0.3846 * visible_height / (float) lats->shape()[1];
+    double radius = fmin(x_radius, y_radius);
+
     wxPoint pl;
+    // Draw a red circle around the longitude / latitude that is currently
+    // selected for spot forecasts
+    wxBrush brush(wxColor("red"), wxALPHA_OPAQUE);
+    wrdc.SetBrush(brush);
+    double lon = lons->get(lon_idx, lat_idx);
+    double lat = lats->get(lon_idx, lat_idx);
+    GetCanvasPixLL(&vp, &pl, lat, lon);
+    wrdc.DrawCircle(pl.x, pl.y, radius / 6.);
 
     int n_realizations = fcst->shape()[1];
     std::vector<double> one_point_speeds(n_realizations);
     std::vector<int> order;
 
+    // Now loop through all the grid points and draw a wind circle on each one.
     for (int i=0; i <= lons->shape()[0]; i++){
         for (int j=0; j <= lons->shape()[1]; j++){
             float lat = lats->get(i, j);
             float lon = lons->get(i, j);
 
             GetCanvasPixLL(&vp, &pl, lat, lon);
+
+            // First draw the background
             RenderBackgroundCircle(pl, radius, wrdc, vp);
 
+            // Then determine the order of the ensembles, this allows
+            // us to make sure the triangle showing the largest wind
+            // speed is always shown.
             for (int k = 0; k < n_realizations; k++){
                 one_point_speeds[k] = speed.get({time_idx, k, i, j});
             }
             order = argsort(one_point_speeds);
 
+            // Draw each of the triangles
             for (int k = 0; k < speed.shape()[1]; k++){
                 RenderWindTriangle(pl,
                                    speed.get({time_idx, order[k], i, j}),

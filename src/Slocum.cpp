@@ -106,7 +106,7 @@ std::vector<double> expand_tiny_array(std::string compressed,
 
 std::vector<double> expand_tiny_direction(std::string compressed,
                                           std::vector<int> shape){
-    return expand_tiny_array(compressed, get_direction_bins(),
+    return expand_tiny_array(compressed, direction_bins,
                              shape, true, -M_PI);
 }
 
@@ -162,7 +162,7 @@ void expand_wind(std::string compressed, EnsembleForecast *fcst) {
 
     std::string compressed_speed = compressed.substr(0, n);
     std::vector<double> speed = expand_tiny_array(compressed_speed,
-                                                  get_wind_bins(), shape);
+                                                  wind_bins, shape);
     Tensor<double> wind_speed(shape, &speed);
 
     fcst->add_variable(WIND_SPEED_ID, wind_speed);
@@ -320,4 +320,59 @@ EnsembleForecast read_slocum_forecast(std::string filename) {
     expand_wind(variables[WIND_ID].payload, &fcst);
 
     return fcst;
+}
+
+
+std::vector<double> bins_to_probabilities(std::vector<int> bins, int max_bin) {
+    int cnt;
+    std::vector<double> probs(max_bin);
+
+    for (int i=0; i<max_bin; i++){
+        cnt = 0;
+        for (std::vector<int>::size_type j=0; j<bins.size(); j++){
+            assert(bins[j] <= max_bin);
+            if (bins[j] == (int) i) {
+              cnt += 1;
+            }
+        }
+        probs[i] = (double) cnt / (double) bins.size();
+    }
+    return probs;
+}
+
+
+Matrix<int> values_to_bins(Matrix<double> values, std::vector<double> bin_divs) {
+    int m = values.shape()[0];
+    int n = values.shape()[1];
+    Matrix<int> bins(m, n);
+    for (int i = 0; i < m; i++){
+        for (int j = 0; j < n; j++) {
+            bins.set(i, j, bisect(bin_divs, values.get(i, j)));
+        }
+    }
+    return bins;
+}
+
+
+Matrix<double> binned_probabilities(const Matrix<double> values,
+                                    const std::vector<double> bin_divs){
+
+    int m = values.shape()[0];
+
+    Matrix<int> bins = values_to_bins(values, bin_divs);
+
+    // Here we look for the largest bin number, no need to compute
+    // probabilities for bins that aren't observed.
+    int max_bin = (int) bins.max();
+    max_bin += 1;
+
+    Matrix<double> probs(m, max_bin);
+
+    for (int i = 0; i < m; i++) {
+        std::vector<double> row_probs = bins_to_probabilities(bins.row(i), max_bin);
+        for (int j = 0; j < max_bin; j++) {
+            probs.set(i, j, row_probs[j]);
+        }
+    }
+    return probs;
 }

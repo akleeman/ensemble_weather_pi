@@ -10,7 +10,7 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/scrolwin.h>
+#include <wx/panel.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
 #include <wx/colour.h>
@@ -33,7 +33,7 @@ class EnsembleWeatherUI : public wxFrame
 	private:
 	
 	protected:
-		wxScrolledWindow* m_SpotDisplay;
+		wxPanel* m_SpotDisplay;
 		wxButton* m_open_button;
 		wxTextCtrl* m_forecast_file_text;
 		wxButton* m_prev_time_button;
@@ -41,6 +41,7 @@ class EnsembleWeatherUI : public wxFrame
 		wxStaticText* m_time_text;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnPaintSpot( wxPaintEvent& event ) { event.Skip(); }
 		virtual void OnOpenFile( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPrevTimeClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnNextTimeClick( wxCommandEvent& event ) { event.Skip(); }
@@ -48,7 +49,7 @@ class EnsembleWeatherUI : public wxFrame
 	
 	public:
 		
-		EnsembleWeatherUI( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Ensemble Weather"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 456,358 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		EnsembleWeatherUI( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Ensemble Weather"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 600,350 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~EnsembleWeatherUI();
 	

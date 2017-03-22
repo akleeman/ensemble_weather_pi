@@ -5,6 +5,13 @@
 #ifndef _TENSOR_H_
 #define _TENSOR_H_
 
+/*
+ * The Tensor class is used to hold multidimensional data, at its core
+ * it's simply a vector wrapped with more complicated indexing that
+ * allow you to access elements using offsets along each dimension.
+ *
+ * See test_tensor.cc for examples.
+ */
 template <typename T>
 class Tensor
 {
@@ -48,14 +55,6 @@ class Tensor
 
       std::vector<int> shape() const { return _shape; }
 
-      int get_index(std::vector<int> indexer) {
-        int idx = 0;
-        for (typename std::vector<int>::size_type i = 0; i < _shape.size(); i++){
-            idx += _index_multiplier[i] * indexer[i];
-        }
-        return idx;
-      }
-
       T get(std::vector<int> indexer) {
           return _values[get_index(indexer)];
       }
@@ -67,6 +66,19 @@ class Tensor
       std::vector<T> _values;
 
   protected:
+      /*
+       * Given a vector indexer, this returns the corresponding index
+       * into the internal flat vector.
+       */
+      int get_index(std::vector<int> indexer) {
+        assert(indexer.size() == _shape.size());
+        int idx = 0;
+        for (typename std::vector<int>::size_type i = 0; i < _shape.size(); i++){
+            idx += _index_multiplier[i] * indexer[i];
+        }
+        return idx;
+      }
+
       std::vector<int> _shape;
       std::vector<int> _index_multiplier;
 };

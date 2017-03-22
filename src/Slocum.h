@@ -7,10 +7,9 @@
 #include <ctime>
 
 #include "zlib.h"
-#include "Variables.h"
 #include "GriddedData.h"
 
-#define DEBUG true
+#define DEBUG false
 #define PRINT_DEBUG(x) if(DEBUG) std::cout << x << std::endl
 
 // Be sure to only execute the following once.
@@ -46,5 +45,12 @@ std::vector<time_t> expand_time(std::string compressed);
 std::vector<int> expand_realization(std::string compressed);
 
 void expand_wind(std::string compressed, EnsembleForecast *fcst);
+
+std::vector<double> bins_to_probabilities(std::vector<int> bins, int max_bin);
+
+Matrix<int> values_to_bins(Matrix<double> values, std::vector<double> bins);
+
+Matrix<double> binned_probabilities(const Matrix<double> values,
+                                    const std::vector<double> bin_divs);
 
 #endif

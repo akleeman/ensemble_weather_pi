@@ -930,7 +930,6 @@ public:
 };
 
 
-
 wxString DECL_EXP PI_GetPLIBColorScheme();
 int DECL_EXP PI_GetPLIBDepthUnitInt();
 int DECL_EXP PI_GetPLIBSymbolStyle();
