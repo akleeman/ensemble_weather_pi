@@ -68,6 +68,7 @@ EnsembleWeatherUI::EnsembleWeatherUI( wxWindow* parent, wxWindowID id, const wxS
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	m_SpotDisplay->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( EnsembleWeatherUI::OnSpotDoubleClick ), NULL, this );
 	m_SpotDisplay->Connect( wxEVT_PAINT, wxPaintEventHandler( EnsembleWeatherUI::OnPaintSpot ), NULL, this );
 	m_open_button->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnsembleWeatherUI::OnOpenFile ), NULL, this );
 	m_prev_time_button->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnsembleWeatherUI::OnPrevTimeClick ), NULL, this );
@@ -77,6 +78,7 @@ EnsembleWeatherUI::EnsembleWeatherUI( wxWindow* parent, wxWindowID id, const wxS
 EnsembleWeatherUI::~EnsembleWeatherUI()
 {
 	// Disconnect Events
+	m_SpotDisplay->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( EnsembleWeatherUI::OnSpotDoubleClick ), NULL, this );
 	m_SpotDisplay->Disconnect( wxEVT_PAINT, wxPaintEventHandler( EnsembleWeatherUI::OnPaintSpot ), NULL, this );
 	m_open_button->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnsembleWeatherUI::OnOpenFile ), NULL, this );
 	m_prev_time_button->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( EnsembleWeatherUI::OnPrevTimeClick ), NULL, this );

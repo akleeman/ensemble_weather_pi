@@ -41,6 +41,7 @@ class EnsembleWeatherUI : public wxFrame
 		wxStaticText* m_time_text;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnSpotDoubleClick( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnPaintSpot( wxPaintEvent& event ) { event.Skip(); }
 		virtual void OnOpenFile( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnPrevTimeClick( wxCommandEvent& event ) { event.Skip(); }
@@ -49,7 +50,7 @@ class EnsembleWeatherUI : public wxFrame
 	
 	public:
 		
-		EnsembleWeatherUI( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Ensemble Weather"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 600,350 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		EnsembleWeatherUI( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Ensemble Weather"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 600,350 ), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_FLOAT_ON_PARENT|wxSTAY_ON_TOP|wxTAB_TRAVERSAL );
 		
 		~EnsembleWeatherUI();
 	

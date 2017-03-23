@@ -21,14 +21,11 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
     : EnsembleWeatherUI(parent, id, title, pos, size, style) {
 //        m_fcst = read_slocum_forecast("/home/kleeman/Desktop/gridded_gefs_2017-03-18_1103.fcst");
         m_fcst = read_slocum_forecast("/home/kleeman/Desktop/gridded_gefs_2017-03-22_1203.fcst");
-        m_time_index = 0;
-        m_lon_index = 0;
-        m_lat_index = 0;
         wxSize s = GetSize();
         s.x = 600;
         s.y = 350;
         SetSize(s);
-        m_need_to_process_double_click = false;
+        Reset();
     };
 
     void OnOpenFile(wxCommandEvent& event);
@@ -41,6 +38,8 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
 
     void OnChartDoubleClick(wxMouseEvent &event);
 
+    void OnSpotDoubleClick(wxMouseEvent &event);
+
     void Reset();
 
     void Render(wrDC &wrdc, PlugIn_ViewPort &vp);
@@ -52,6 +51,7 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
 
   private:
 
+    SpotPlot m_spot_plot;
     wxPoint m_recent_double_click_point;
     bool m_need_to_process_double_click;
     WindCircleFactory m_wind_circle_factory;

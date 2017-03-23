@@ -198,6 +198,8 @@ bool ensemble_weather_pi::MouseEventHook(wxMouseEvent &event){
         m_manager->OnChartDoubleClick(event);
         RequestRefresh(m_parent_window);
         return true;
+    } else if (event.LeftUp()) {
+        return true;
     } else {
         return false;
     }

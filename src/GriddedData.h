@@ -138,6 +138,8 @@ class SpotForecast
 
      SpotVariable get_variable(VariableID id);
 
+     std::vector<time_t>* get_times() { return m_times; };
+
 };
 
 

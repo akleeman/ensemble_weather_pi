@@ -3,6 +3,11 @@
 
 
 void EnsembleWeatherManager::Reset(){
+  m_time_index = 0;
+  m_lon_index = 0;
+  m_lat_index = 0;
+  m_need_to_process_double_click = false;
+  m_spot_plot = SpotPlot();
 }
 
 
@@ -52,23 +57,32 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
 
 
 void EnsembleWeatherManager::OnChartDoubleClick(wxMouseEvent &event) {
-  m_recent_double_click_point = event.GetPosition();
-  m_need_to_process_double_click = true;
+    m_recent_double_click_point = event.GetPosition();
+    m_need_to_process_double_click = true;
+    RequestRefresh(m_spot_plot.get_window());
+    RequestRefresh(GetParent());
+}
+
+
+void EnsembleWeatherManager::OnSpotDoubleClick(wxMouseEvent &event) {
+    int new_index = m_spot_plot.get_time_index(event.GetPosition());
+    std::cout << "spot double click" << std::endl;
+    if (new_index >= 0 && new_index < (int) m_fcst.get_times().size()) {
+        m_time_index = new_index;
+        RequestRefresh(m_spot_plot.get_window());
+        RequestRefresh(GetParent());
+    }
+    std::cout << "spot double click done" << std::endl;
 }
 
 
 void EnsembleWeatherManager::OnPaintSpot( wxPaintEvent& event ) {
     wxWindow *window = dynamic_cast<wxWindow*>(event.GetEventObject());
-    if(!window)
+    if (!window)
         return;
 
-    wxPaintDC dc(window);
-    dc.SetBackgroundMode(wxTRANSPARENT);
-
-    wrDC wrdc(dc);
-    SpotPlot spot_plotter;
     SpotForecast spot = m_fcst.get_spot(m_lon_index, m_lat_index);
-    spot_plotter.plot(wrdc, &spot);
+    m_spot_plot.plot(window, &spot, m_time_index);
 }
 
 
@@ -80,7 +94,8 @@ void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
                             wxT ( "Forecast files (*.fcst)|*.fcst;*.fcst|All files (*.*)|*.*" ),
                             wxFD_OPEN);
     if(openDialog.ShowModal() == wxID_OK) {
-      // Call slocum reader.
+        wxString filename = openDialog.GetPath();
+        m_fcst = read_slocum_forecast((std::string) filename);
     }
 }
 
@@ -90,11 +105,14 @@ void EnsembleWeatherManager::OnPrevTimeClick(wxCommandEvent& event) {
     if (m_time_index < 0) {
       m_time_index += (int) m_fcst.get_times().size();
     }
+
+    RequestRefresh(m_spot_plot.get_window());
     RequestRefresh(GetParent());
 }
 
 
 void EnsembleWeatherManager::OnNextTimeClick(wxCommandEvent& event) {
     m_time_index = (m_time_index + 1) % ((int) m_fcst.get_times().size());
+    RequestRefresh(m_spot_plot.get_window());
     RequestRefresh(GetParent());
 }
