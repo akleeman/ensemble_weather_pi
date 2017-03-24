@@ -68,7 +68,7 @@ void SpotPlot::draw_grid(wrDC &wrdc, SpotForecast *fcst){
         sprintf(s, "%3d", hours);
         wxString label(s);
         wrdc.GetTextExtent(label, &w, &h, &decent, &external, &font);
-        x_pos = m_grid_x[i] - w / 2.;
+        x_pos = m_grid_x[i] + m_grid_width / 2. - w / 2.;
         if (x_pos > last_text_right) {
           wrdc.DrawText(label, x_pos,
                         m_grid_y.front() + (m_x_label_height - h) / 2. + 2);
@@ -153,6 +153,25 @@ void SpotPlot::draw_current_time(wrDC &wrdc, SpotForecast *fcst) {
 }
 
 
+void SpotPlot::draw_wind_circles(wrDC &wrdc, SpotForecast *fcst) {
+    SpotVariable wind_direction = fcst->get_variable(WIND_DIRECTION_ID);
+    SpotVariable wind_speed = fcst->get_variable(WIND_SPEED_ID);
+
+    wxPoint center;
+    double radius = 0.4 * std::min(m_grid_width, m_header_height);
+
+    WindCircleFactory wind_circle_factory;
+    for (uint i = 0; i < fcst->get_times()->size(); i++){
+        center.x = m_grid_x[i] + m_grid_width / 2.;
+        center.y = m_grid_y.back() - m_header_height / 2.;
+        wind_circle_factory.RenderPoint(wrdc, center,
+                                        wind_speed.get_data()->row(i),
+                                        wind_direction.get_data()->row(i),
+                                        radius);
+    }
+}
+
+
 void SpotPlot::plot(wxWindow *window, SpotForecast *fcst, int time_index){
 
     m_window = window;
@@ -161,7 +180,6 @@ void SpotPlot::plot(wxWindow *window, SpotForecast *fcst, int time_index){
     wrDC wrdc(dc);
 
     auto wind_speed = fcst->get_variable(WIND_SPEED_ID);
-    auto wind_direction = fcst->get_variable(WIND_DIRECTION_ID);
 
     Matrix<double> *speed = wind_speed.get_data();
     Matrix<double> probs = binned_probabilities(*speed, wind_bins);
@@ -169,6 +187,8 @@ void SpotPlot::plot(wxWindow *window, SpotForecast *fcst, int time_index){
     draw_grid(wrdc, fcst);
     draw_color_bar(wrdc);
     draw_probs(wrdc, probs);
+    draw_wind_circles(wrdc, fcst);
     draw_time_marker(wrdc, time_index);
     draw_current_time(wrdc, fcst);
+
 }

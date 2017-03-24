@@ -18,10 +18,6 @@ variable_t wind_direction_variable = {.name = "wind_direction",
                                       .units = "radians",
                                       };
 
-//std::map<VariableID, variable_t> variable_from_id;
-//variable_from_id[WIND_SPEED_ID] = wind_speed_variable;
-//variable_from_id[WIND_DIRECTION_ID] = wind_direction_variable;
-
 
 // Creates matrices of gridded values by specifying the x and y
 // coordinates along the edges.  For example, when working with
@@ -46,6 +42,28 @@ void meshgrid(const std::vector<double> x, std::vector<double> y,
       }
     }
 }
+
+
+// Takes a grid, which is defined by a longitude and latitude matrix,
+// and determines which indices in the grid (lon_index, lat_index)
+// correspond to the point closest to lon, lat.
+void nearest(Matrix<double> *lons, Matrix<double> *lats,
+             const double lon, const double lat,
+             int *lon_index, int *lat_index) {
+    double min_dist = 1.e10;
+    for (int i = 0; i < lons->shape()[0]; i++){
+        for (int j = 0; j < lons->shape()[1]; j++){
+            double dist = (pow(lons->get(i, j) - lon, 2.) +
+                           pow(lats->get(i, j) - lat, 2.));
+            if (dist < min_dist) {
+                min_dist = dist;
+                *lon_index = i;
+                *lat_index = j;
+            }
+        }
+    }
+}
+
 
 
 // Creates a GriddedVariable using
@@ -173,3 +191,4 @@ EnsembleForecastVariable EnsembleForecast::get_variable(VariableID id){
     return EnsembleForecastVariable(id, &m_variables[id], &m_times, &m_realizations,
                                     &m_lons, &m_lats);
 }
+

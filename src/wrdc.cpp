@@ -763,7 +763,7 @@ void wrDC::DrawEllipse( wxCoord x, wxCoord y, wxCoord width, wxCoord height )
 void wrDC::DrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxCoord height, double start, double end)
 {
   if( dc )
-      dc->DrawEllipticArc( x, y, width, height, start, end);
+      dc->DrawEllipticArc( x - width / 2., y - height / 2., width, height, start, end);
 #ifdef ocpnUSE_GL
   else {
       float r1 = width / 2, r2 = height / 2;

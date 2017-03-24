@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *****************************************************************************/
 #include <map>
+#include <cmath>
 
 #include "Common.h"
 #include "GribRecord.h"
@@ -34,8 +35,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _GRIDDED_DATA_H_
 #define _GRIDDED_DATA_H_
 
+
 void meshgrid(const std::vector<double> lons, std::vector<double> lats,
               Matrix<double> *lon_mat, Matrix<double> *lat_mat);
+
+
+void nearest(Matrix<double> *lons, Matrix<double> *lats,
+             const double lon, const double lat,
+             int *lon_index, int *lat_index);
 
 
 class GriddedVariable
@@ -139,6 +146,9 @@ class SpotForecast
      SpotVariable get_variable(VariableID id);
 
      std::vector<time_t>* get_times() { return m_times; };
+
+     double get_lon() { return m_lon; }
+     double get_lat() { return m_lat; }
 
 };
 

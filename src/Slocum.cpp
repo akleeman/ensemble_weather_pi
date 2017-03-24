@@ -376,3 +376,48 @@ Matrix<double> binned_probabilities(const Matrix<double> values,
     }
     return probs;
 }
+
+
+EnsembleForecast diagnostic_test_foreast() {
+
+    int n_times = 16;
+    std::vector<int> realizations = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    int n_realizations = (int) realizations.size();
+    std::vector<double> lons = {-3., -2., -1., 0., 1., 2., 3.};
+    int n_lons = (int) lons.size();
+    std::vector<double> lats = {-2., -1., 0., 1., 2.};
+    int n_lats = (int) lats.size();
+
+    Tensor<double> wind_speed({n_times, n_realizations, n_lons, n_lats});
+    Tensor<double> wind_direction(wind_speed.shape());
+
+    std::vector<time_t> times;
+
+    struct tm fcst_start = {.tm_sec = 0,
+                            .tm_min = 0,
+                            .tm_hour = 0,
+                            .tm_mday = 5,
+                            .tm_mon = 3,
+                            .tm_year = 117};
+
+    for (int t = 0; t < n_times; t++) {
+        fcst_start.tm_hour += 6;
+        time_t valid_time = mktime(&fcst_start);
+        times.push_back(valid_time);
+        for (int k = 0; k < n_realizations; k++) {
+            // for each realization
+            for (int i = 0; i < n_lons; i++) {
+                for (int j = 0; j < n_lats; j++) {
+                    double speed = (t / (double) n_times) * (i * i + j * j);
+                    wind_speed.set({t, k, i, j}, speed);
+                    wind_direction.set({t, k, i, j}, t * M_PI / 8);
+                }
+            }
+        }
+    }
+
+    EnsembleForecast fcst(times, realizations, lons, lats);
+    fcst.add_variable(WIND_SPEED_ID, wind_speed);
+    fcst.add_variable(WIND_DIRECTION_ID, wind_direction);
+    return fcst;
+}

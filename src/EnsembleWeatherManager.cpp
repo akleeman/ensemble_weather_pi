@@ -11,6 +11,22 @@ void EnsembleWeatherManager::Reset(){
 }
 
 
+void EnsembleWeatherManager::Refresh() {
+  if (m_spot_plot.get_window()) {
+      RequestRefresh(m_spot_plot.get_window());
+  }
+  RequestRefresh(GetParent());
+}
+
+
+void EnsembleWeatherManager::LoadFile(std::string filename) {
+    m_fcst = read_slocum_forecast(filename);
+    wxSize s = GetSize();
+    s.x = m_fcst.get_times().size() * 35;
+    s.y = 350;
+    SetSize(s);
+}
+
 void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
     if (!m_fcst.is_empty()) {
         if(!wrdc.GetDC()) {
@@ -22,23 +38,17 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
         }
 
         if (m_need_to_process_double_click) {
-          double lon, lat;
-          GetCanvasLLPix(&vp, m_recent_double_click_point, &lon, &lat);
 
-          auto lons = m_fcst.get_lats();
-          auto lats = m_fcst.get_lons();
-          double min_dist = 1.e10;
-          for (int i = 0; i <= lons->shape()[0]; i++){
-              for (int j = 0; j <= lons->shape()[0]; j++){
-                  double dist = (pow(lons->get(i, j) - lon, 2.) +
-                                 pow(lats->get(i, j) - lat, 2.));
-                  if (dist < min_dist) {
-                      min_dist = dist;
-                      m_lon_index = i;
-                      m_lat_index = j;
-                  }
-              }
-          }
+          // find out where the user clicked.
+          double lon, lat;
+          GetCanvasLLPix(&vp, m_recent_double_click_point, &lat, &lon);
+
+          // this looks up the indices into a set of lons / lats grids
+          // that are closest to the provided lon / lat.
+          nearest(m_fcst.get_lons(), m_fcst.get_lats(),
+                  lon, lat,
+                  &m_lon_index, &m_lat_index);
+
           m_need_to_process_double_click = false;
         }
 
@@ -47,11 +57,12 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
                                                     m_lon_index,
                                                     m_lat_index);
 
-        tm *timeinfo = localtime(&m_fcst.get_times()[m_time_index]);
-        m_time_text->SetLabel(asctime(timeinfo));
-
         if(!wrdc.GetDC())
             glPopAttrib();
+
+        if (m_spot_plot.get_window()) {
+            RequestRefresh(m_spot_plot.get_window());
+        }
     }
 }
 
@@ -59,20 +70,16 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
 void EnsembleWeatherManager::OnChartDoubleClick(wxMouseEvent &event) {
     m_recent_double_click_point = event.GetPosition();
     m_need_to_process_double_click = true;
-    RequestRefresh(m_spot_plot.get_window());
-    RequestRefresh(GetParent());
+    Refresh();
 }
 
 
 void EnsembleWeatherManager::OnSpotDoubleClick(wxMouseEvent &event) {
     int new_index = m_spot_plot.get_time_index(event.GetPosition());
-    std::cout << "spot double click" << std::endl;
     if (new_index >= 0 && new_index < (int) m_fcst.get_times().size()) {
         m_time_index = new_index;
-        RequestRefresh(m_spot_plot.get_window());
-        RequestRefresh(GetParent());
     }
-    std::cout << "spot double click done" << std::endl;
+    Refresh();
 }
 
 
@@ -80,9 +87,18 @@ void EnsembleWeatherManager::OnPaintSpot( wxPaintEvent& event ) {
     wxWindow *window = dynamic_cast<wxWindow*>(event.GetEventObject());
     if (!window)
         return;
-
     SpotForecast spot = m_fcst.get_spot(m_lon_index, m_lat_index);
     m_spot_plot.plot(window, &spot, m_time_index);
+
+    char s[100];
+    wxDateTime fcst_time;
+    fcst_time = wxDateTime((*(spot.get_times()))[m_time_index]);
+    wxString time_string = fcst_time.FormatISOCombined();
+    std::string time_std_string = (std::string) time_string;
+
+    sprintf(s, "Forecast for %3.1f, %4.1f at %s", spot.get_lat(), spot.get_lon(), time_std_string.c_str());
+    m_time_text->SetLabel(s);
+
 }
 
 
@@ -95,7 +111,7 @@ void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
                             wxFD_OPEN);
     if(openDialog.ShowModal() == wxID_OK) {
         wxString filename = openDialog.GetPath();
-        m_fcst = read_slocum_forecast((std::string) filename);
+        LoadFile((std::string) filename);
     }
 }
 
@@ -105,14 +121,11 @@ void EnsembleWeatherManager::OnPrevTimeClick(wxCommandEvent& event) {
     if (m_time_index < 0) {
       m_time_index += (int) m_fcst.get_times().size();
     }
-
-    RequestRefresh(m_spot_plot.get_window());
-    RequestRefresh(GetParent());
+    Refresh();
 }
 
 
 void EnsembleWeatherManager::OnNextTimeClick(wxCommandEvent& event) {
     m_time_index = (m_time_index + 1) % ((int) m_fcst.get_times().size());
-    RequestRefresh(m_spot_plot.get_window());
-    RequestRefresh(GetParent());
+    Refresh();
 }

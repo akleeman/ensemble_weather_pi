@@ -27,6 +27,7 @@ void get_bounding_box(PlugIn_ViewPort &vp,
     }
 }
 
+
 WindCircleFactory::WindCircleFactory()
       : m_circle_fill(255, 255, 255, 80)  // Each wind circle is a semi-transparent white fill.
 {};
@@ -34,11 +35,12 @@ WindCircleFactory::WindCircleFactory()
 
 void WindCircleFactory::RenderBackgroundCircle(wxPoint center,
                                                double radius,
-                                               wrDC &wrdc, PlugIn_ViewPort &vp) {
+                                               wrDC &wrdc) {
 
     // Draw the circle background.
     wxBrush brush(m_circle_fill, wxALPHA_OPAQUE);
     wrdc.SetBrush(brush);
+    wrdc.SetPen(wxNullPen);
     wrdc.DrawCircle(center.x, center.y, radius);
 }
 
@@ -47,7 +49,7 @@ void WindCircleFactory::RenderWindTriangle(wxPoint center,
                                            double speed,
                                            double direction,
                                            double radius,
-                                           wrDC &wrdc, PlugIn_ViewPort &vp){
+                                           wrDC &wrdc){
 
     double dir_ccw_from_east = 90. - 180 * direction / M_PI;
 
@@ -55,11 +57,34 @@ void WindCircleFactory::RenderWindTriangle(wxPoint center,
     // Set the brush color for the given wind speed.
     wxBrush arc_brush(wind_colors[bin], wxALPHA_OPAQUE);
     wrdc.SetBrush(arc_brush);
-
+    wrdc.SetPen(wxNullPen);
     wrdc.DrawEllipticArc(center.x, center.y,
                          2 * radius, 2 * radius,
                          dir_ccw_from_east - 15.,
                          dir_ccw_from_east + 15.);
+}
+
+
+void WindCircleFactory::RenderPoint(wrDC &wrdc,
+                                   wxPoint center,
+                                   std::vector<double> speeds,
+                                   std::vector<double> directions,
+                                   double radius) {
+    // First draw the background
+    RenderBackgroundCircle(center, radius, wrdc);
+
+    // Then determine the order of the ensembles, this allows
+    // us to make sure the triangle showing the largest wind
+    // speed is always shown.
+    std::vector<int> order = argsort(speeds);
+
+    // Draw each of the triangles
+    for (int k = 0; k < (int) speeds.size(); k++){
+        RenderWindTriangle(center,
+                           speeds[order[k]],
+                           directions[order[k]],
+                           radius, wrdc);
+    }
 }
 
 
@@ -92,43 +117,34 @@ bool WindCircleFactory::RenderGriddedForecast(wrDC &wrdc, PlugIn_ViewPort &vp,
     wxPoint pl;
     // Draw a red circle around the longitude / latitude that is currently
     // selected for spot forecasts
-    wxBrush brush(wxColor("red"), wxALPHA_OPAQUE);
-    wrdc.SetBrush(brush);
+    wxPen pen(wxColor("red"));
+    wrdc.SetPen(pen);
+    wrdc.SetBrush(wxNullBrush);
     double lon = lons->get(lon_idx, lat_idx);
     double lat = lats->get(lon_idx, lat_idx);
     GetCanvasPixLL(&vp, &pl, lat, lon);
-    wrdc.DrawCircle(pl.x, pl.y, radius / 6.);
+    wrdc.DrawCircle(pl.x, pl.y, radius);
 
     int n_realizations = fcst->shape()[1];
     std::vector<double> one_point_speeds(n_realizations);
-    std::vector<int> order;
+    std::vector<double> one_point_directions(n_realizations);
 
     // Now loop through all the grid points and draw a wind circle on each one.
-    for (int i=0; i <= lons->shape()[0]; i++){
-        for (int j=0; j <= lons->shape()[1]; j++){
+    for (int i=0; i < lons->shape()[0]; i++){
+        for (int j=0; j < lons->shape()[1]; j++){
             float lat = lats->get(i, j);
             float lon = lons->get(i, j);
 
             GetCanvasPixLL(&vp, &pl, lat, lon);
-
-            // First draw the background
-            RenderBackgroundCircle(pl, radius, wrdc, vp);
-
-            // Then determine the order of the ensembles, this allows
-            // us to make sure the triangle showing the largest wind
-            // speed is always shown.
+            // Here we create vectors of the speeds and directions to pass into
+            // the plotting function.
             for (int k = 0; k < n_realizations; k++){
                 one_point_speeds[k] = speed.get({time_idx, k, i, j});
+                one_point_directions[k] = dir.get({time_idx, k, i, j});
             }
-            order = argsort(one_point_speeds);
 
-            // Draw each of the triangles
-            for (int k = 0; k < speed.shape()[1]; k++){
-                RenderWindTriangle(pl,
-                                   speed.get({time_idx, order[k], i, j}),
-                                   dir.get({time_idx, order[k], i, j}),
-                                   radius, wrdc, vp);
-            }
+            RenderPoint(wrdc, pl, one_point_speeds, one_point_directions, radius);
+
         }
     }
     return true;

@@ -23,6 +23,8 @@ class SpotPlot
 
         void draw_current_time(wrDC &wrdc, SpotForecast *fcst);
 
+        void draw_wind_circles(wrDC &wrdc, SpotForecast *fcst);
+
         void plot(wxWindow *window, SpotForecast *fcst, int time_index);
 
         wxWindow *get_window() { return m_window; };

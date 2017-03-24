@@ -19,14 +19,11 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
                            const wxSize& size = wxSize( 389,62 ),
                            long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
     : EnsembleWeatherUI(parent, id, title, pos, size, style) {
-//        m_fcst = read_slocum_forecast("/home/kleeman/Desktop/gridded_gefs_2017-03-18_1103.fcst");
-        m_fcst = read_slocum_forecast("/home/kleeman/Desktop/gridded_gefs_2017-03-22_1203.fcst");
-        wxSize s = GetSize();
-        s.x = 600;
-        s.y = 350;
-        SetSize(s);
         Reset();
+        LoadFile("/home/kleeman/Desktop/gridded_gefs_2017-03-22_1203.fcst");
     };
+
+    void LoadFile(std::string filename);
 
     void OnOpenFile(wxCommandEvent& event);
 
@@ -41,6 +38,8 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
     void OnSpotDoubleClick(wxMouseEvent &event);
 
     void Reset();
+
+    void Refresh();
 
     void Render(wrDC &wrdc, PlugIn_ViewPort &vp);
 

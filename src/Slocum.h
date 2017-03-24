@@ -53,4 +53,6 @@ Matrix<int> values_to_bins(Matrix<double> values, std::vector<double> bins);
 Matrix<double> binned_probabilities(const Matrix<double> values,
                                     const std::vector<double> bin_divs);
 
+EnsembleForecast diagnostic_test_foreast();
+
 #endif

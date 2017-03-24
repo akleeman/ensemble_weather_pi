@@ -196,7 +196,6 @@ void ensemble_weather_pi::SetCursorLatLon(double lat, double lon)
 bool ensemble_weather_pi::MouseEventHook(wxMouseEvent &event){
     if (event.LeftDClick()) {
         m_manager->OnChartDoubleClick(event);
-        RequestRefresh(m_parent_window);
         return true;
     } else if (event.LeftUp()) {
         return true;

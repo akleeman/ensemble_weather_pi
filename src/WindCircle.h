@@ -32,11 +32,17 @@ public:
                             double speed,
                             double direction,
                             double radius,
-                            wrDC &wrdc, PlugIn_ViewPort &vp);
+                            wrDC &wrdc);
 
     void RenderBackgroundCircle(wxPoint center,
                                 double radius,
-                                wrDC &wrdc, PlugIn_ViewPort &vp);
+                                wrDC &wrdc);
+
+    void RenderPoint(wrDC &wrdc,
+                     wxPoint center,
+                     std::vector<double> speeds,
+                     std::vector<double> directions,
+                     double radius);
 
     void Reset() {};
 
