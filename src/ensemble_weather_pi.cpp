@@ -198,6 +198,9 @@ bool ensemble_weather_pi::MouseEventHook(wxMouseEvent &event){
         m_manager->OnChartDoubleClick(event);
         return true;
     } else if (event.LeftUp()) {
+        // this disables the chart recenter on a left click which
+        // fires whenever a double click happens and makes things
+        // confusing.
         return true;
     } else {
         return false;
@@ -273,8 +276,6 @@ void ensemble_weather_pi::OnContextMenuItemCallback(int id)
 {
     if(!m_manager)
         return;
-
-//    m_manager->Reset();
 }
 
 bool ensemble_weather_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
@@ -325,7 +326,7 @@ bool ensemble_weather_pi::SaveConfig(void)
 
 void ensemble_weather_pi::SetColorScheme(PI_ColorScheme cs)
 {
-      DimeWindow(m_manager);
+//      DimeWindow(m_manager);
 }
 
 wxString ensemble_weather_pi::StandardPath()

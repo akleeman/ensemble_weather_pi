@@ -2,6 +2,11 @@
 #include "WindCircle.h"
 
 
+/*
+ * Takes a grid of longitudes and latitudes and determines their
+ * upper right and lower left most points in the current viewport.
+ * Those values are stored in place in the ll and ur arguments.
+ */
 void get_bounding_box(PlugIn_ViewPort &vp,
                       Matrix<double> *lons,
                       Matrix<double> *lats,
@@ -65,6 +70,9 @@ void WindCircleFactory::RenderWindTriangle(wxPoint center,
 }
 
 
+/*
+ * Renders a wind circle at a given point on the screen.
+ */
 void WindCircleFactory::RenderPoint(wrDC &wrdc,
                                    wxPoint center,
                                    std::vector<double> speeds,
@@ -88,6 +96,12 @@ void WindCircleFactory::RenderPoint(wrDC &wrdc,
 }
 
 
+/*
+ * Takes the wind values from an EnsembleForecast and renders the gridded
+ * forecast corresponding to time `time_idx` to the screen.  The longitude
+ * and latitude are required in order to surround the active point with a
+ * circle indicating it's active.
+ */
 bool WindCircleFactory::RenderGriddedForecast(wrDC &wrdc, PlugIn_ViewPort &vp,
                                               EnsembleForecast *fcst,
                                               int time_idx, int lon_idx, int lat_idx){
@@ -116,7 +130,7 @@ bool WindCircleFactory::RenderGriddedForecast(wrDC &wrdc, PlugIn_ViewPort &vp,
 
     wxPoint pl;
     // Draw a red circle around the longitude / latitude that is currently
-    // selected for spot forecasts
+    // selected for spot forecasts.
     wxPen pen(wxColor("red"));
     wrdc.SetPen(pen);
     wrdc.SetBrush(wxNullBrush);

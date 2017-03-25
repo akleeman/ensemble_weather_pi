@@ -11,6 +11,8 @@ class SpotPlot
 
         void create_grid(wrDC &wrdc, int n_x, int n_y);
 
+        void add_x_label(wrDC &wrdc, SpotForecast *fcst);
+
         void draw_grid(wrDC &wrdc, SpotForecast *fcst);
 
         void draw_color_bar(wrDC &wrdc);
@@ -41,8 +43,9 @@ class SpotPlot
         double m_grid_width;
         double m_color_bar_width = 30;
         double m_header_height = 30;
-        double m_x_label_height = 30;
-        double m_y_label_width = 30;
+        double m_x_label_height = 40;
+        double m_y_label_width = 50;
+        wxColour m_grid_color = wxColor(200, 200, 200);
         wxColour m_bg_color = wxColor(230, 230, 230);
         std::vector<double> m_grid_x, m_grid_y;
 };

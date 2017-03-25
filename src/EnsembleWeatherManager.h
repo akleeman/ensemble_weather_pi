@@ -20,7 +20,8 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
                            long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL)
     : EnsembleWeatherUI(parent, id, title, pos, size, style) {
         Reset();
-        LoadFile("/home/kleeman/Desktop/gridded_gefs_2017-03-22_1203.fcst");
+        LoadFile("/home/kleeman/Desktop/gridded_gfs_2017-03-22_1203.fcst");
+//        LoadFile("/home/kleeman/Desktop/gridded_gefs_2017-03-22_1203.fcst");
     };
 
     void LoadFile(std::string filename);

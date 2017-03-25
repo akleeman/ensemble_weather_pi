@@ -1,8 +1,4 @@
-Change user interface
-read a slocum fcst
-create wind circles
-change settings
-logo
-clean any unsed bits from grib
-tests?
+deal with non-ensemble forecasts
+variables other than wind
+change / store settings
 register plugin with opencpn
