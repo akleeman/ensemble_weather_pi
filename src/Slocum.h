@@ -9,7 +9,7 @@
 #include "zlib.h"
 #include "GriddedData.h"
 
-#define DEBUG false
+#define DEBUG true
 #define PRINT_DEBUG(x) if(DEBUG) std::cout << x << std::endl
 
 // Be sure to only execute the following once.

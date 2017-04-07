@@ -1,3 +1,30 @@
+/******************************************************************************
+ *
+ * Project:  OpenCPN
+ * Purpose:  Ensemble Weather Plugin
+ * Author:   Alex Kleeman
+ *
+ ***************************************************************************
+ *   Copyright (C) 2017 by Alex Kleeman                                 *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************
+ *
+ */
+
 #include <iostream>
 #include "WindCircle.h"
 
@@ -38,6 +65,11 @@ WindCircleFactory::WindCircleFactory()
 {};
 
 
+/*
+ * Draws a reference circle which makes it easier to tell
+ * both where a forecast is valid and which direction
+ * the wind is coming from.
+ */
 void WindCircleFactory::RenderBackgroundCircle(wxPoint center,
                                                double radius,
                                                wrDC &wrdc) {
@@ -50,6 +82,12 @@ void WindCircleFactory::RenderBackgroundCircle(wxPoint center,
 }
 
 
+/*
+ * Creates a pie slice like triangle representing a single
+ * wind speed/direction forecast where the color indicates
+ * the wind speed and the direction is given by the
+ * orientation of the pie slice.
+ */
 void WindCircleFactory::RenderWindTriangle(wxPoint center,
                                            double speed,
                                            double direction,
@@ -115,17 +153,21 @@ bool WindCircleFactory::RenderGriddedForecast(wrDC &wrdc, PlugIn_ViewPort &vp,
     auto lons = wind_speed.get_lons();
     auto lats = wind_speed.get_lats();
 
-    // Determine which radius to use by looking at the bouding box
+    // Determine which radius to use by looking at the bounding box
     // of the visible forecast area.
     wxPoint ll, ur;
     get_bounding_box(vp, lons, lats, &ll, &ur);
-    int visible_width = std::min(ur.x, vp.pix_width) - std::max(ll.x, 0);
-    int visible_height = std::min(ur.y, vp.pix_height) - std::max(ll.y, 0);
 
-    // TODO: perhaps here we should only be using the number of visible
-    // longitudes and latitudes
-    double x_radius = 0.3846 * visible_width / (float) lons->shape()[0];
-    double y_radius = 0.3846 * visible_height / (float) lats->shape()[1];
+    // The radius is then the overall width / height divided by the
+    // number of points that need to be shown.  Note that the overall
+    // width may be larger than the view port width, but that's ok because
+    // not all the longitudes / latitudes will be shown either so the
+    // ratios (visible_width / visible_lons) and (overall_width / all_lons)
+    // should be very similar.
+    int overall_width = ur.x - ll.x;
+    int overall_height = ur.y - ll.y;
+    double x_radius = 0.3846 * overall_width / (float) lons->shape()[0];
+    double y_radius = 0.3846 * overall_height / (float) lats->shape()[1];
     double radius = fmin(x_radius, y_radius);
 
     wxPoint pl;

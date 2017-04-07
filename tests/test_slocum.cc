@@ -26,6 +26,12 @@ TEST(slocum, test_read_file) {
     EXPECT_DOUBLE_EQ(lats->get(0, 1), -29.);
 }
 
+
+TEST(slocum, test_read_gfs_file) {
+    // Just make sure it can be read for now.
+    auto fcst = read_slocum_forecast("/home/kleeman/Desktop/gridded_gfs_2017-03-22_1203.fcst");
+}
+
 TEST(slocum, test_unpack_ints) {
     // This takes a packed array containing and odd number of values
     // from 0-14, and unpacks it making sure the correct values are

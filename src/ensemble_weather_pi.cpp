@@ -247,7 +247,7 @@ void ensemble_weather_pi::ShowPreferencesDialog( wxWindow* parent )
 
 void ensemble_weather_pi::OnToolbarToolCallback(int id)
 {
-    std::cout << "OnToolbarToolCallback" << std::endl;
+    PRINT_DEBUG("OnToobarToolCallback");
     if(!m_manager) {
         m_manager = new EnsembleWeatherManager(m_parent_window);
         wxPoint p = m_manager->GetPosition();

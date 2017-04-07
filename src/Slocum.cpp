@@ -223,10 +223,12 @@ compressed_variable_t extract_one_variable(std::string encoded_variables){
     // The variable id is simply an integer which we've mapped to an enum
     VariableID variable_id = (VariableID) encoded_variables[0];
     // The variable length is a 24 bit integer which isn't standard so
-    // we have to manually combine the three bits.
-    int l0 = encoded_variables[1];
-    int l1 = encoded_variables[2];
-    int l2 = encoded_variables[3];
+    // we have to manually combine the three bits.  Notice that we have
+    // to make sure the char gets first interpreted as an unsigned int,
+    // then converted to int.
+    int l0 = (int) (uint8_t) encoded_variables[1];
+    int l1 = (int) (uint8_t) encoded_variables[2];
+    int l2 = (int) (uint8_t) encoded_variables[3];
     int length = (l0 << 16) + (l1 << 8) + l2;
 
     compressed_variable_t compressed = {.id = variable_id,
@@ -301,7 +303,12 @@ EnsembleForecast read_slocum_forecast(std::string filename) {
     }
 
     PRINT_DEBUG("About to parse realization");
-    std::vector<int> realizations = expand_realization(variables[REALIZATION_ID].payload);
+    std::vector<int> realizations;
+    if (variables.find(REALIZATION_ID) != variables.end()) {
+      realizations = expand_realization(variables[REALIZATION_ID].payload);
+    } else {
+      realizations = {0};
+    }
 
     PRINT_DEBUG("About to parse latitude");
     std::vector<double> lats = expand_small_floats(variables[LATITUDE_ID].payload, 3);

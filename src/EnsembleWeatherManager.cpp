@@ -1,3 +1,30 @@
+/******************************************************************************
+ *
+ * Project:  OpenCPN
+ * Purpose:  Ensemble Weather Plugin
+ * Author:   Alex Kleeman
+ *
+ ***************************************************************************
+ *   Copyright (C) 2017 by Alex Kleeman                                 *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************
+ *
+ */
+
 #include <iostream>
 #include "EnsembleWeatherManager.h"
 
@@ -20,12 +47,18 @@ void EnsembleWeatherManager::Refresh() {
 }
 
 
+/*
+ * A utility function which loads a new file.
+ */
 void EnsembleWeatherManager::LoadFile(std::string filename) {
+    Reset();
+    PRINT_DEBUG("LoadFile: " << filename);
     m_fcst = read_slocum_forecast(filename);
     wxSize s = GetSize();
     s.x = m_fcst.get_times().size() * 35;
     s.y = 350;
     SetSize(s);
+    Refresh();
 }
 
 
@@ -33,6 +66,7 @@ void EnsembleWeatherManager::LoadFile(std::string filename) {
  * Here we render the gridded forecast overlay.
  */
 void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
+    PRINT_DEBUG("Render");
     if (!m_fcst.is_empty()) {
         // If we're using GL we need to intialize before drawing and
         // everything get's computed in a buffer, then popped to the
@@ -83,6 +117,7 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
  * click is made active and used in the spot forecast.
  */
 void EnsembleWeatherManager::OnChartDoubleClick(wxMouseEvent &event) {
+    PRINT_DEBUG("OnChartDoubleClick");
     // In order to determine where the user clicked we need to have the
     // plugin viewport around, which we don't at this point!  Instead
     // we set a flag, tell everything to refresh and wait until the
@@ -99,6 +134,7 @@ void EnsembleWeatherManager::OnChartDoubleClick(wxMouseEvent &event) {
  * forecast and the gridded forecast plots.
  */
 void EnsembleWeatherManager::OnSpotDoubleClick(wxMouseEvent &event) {
+  PRINT_DEBUG("OnSpotDoubleClick");
     if (!m_fcst.is_empty()) {
         int new_index = m_spot_plot.get_time_index(event.GetPosition());
         if (new_index >= 0 && new_index < (int) m_fcst.get_times().size()) {
@@ -113,6 +149,7 @@ void EnsembleWeatherManager::OnSpotDoubleClick(wxMouseEvent &event) {
  * This gets called whenever the spot forecast plot gets refreshed.
  */
 void EnsembleWeatherManager::OnPaintSpot( wxPaintEvent& event ) {
+    PRINT_DEBUG("OnPaintSpot");
     wxWindow *window = dynamic_cast<wxWindow*>(event.GetEventObject());
     if (!window)
         return;
@@ -136,6 +173,7 @@ void EnsembleWeatherManager::OnPaintSpot( wxPaintEvent& event ) {
  * Open a file dialog and load the resulting forecast file.
  */
 void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
+    PRINT_DEBUG("OnOpenFile");
     wxString error;
     wxFileDialog openDialog(this,
                             _( "Select Forecast File" ),
@@ -153,6 +191,7 @@ void EnsembleWeatherManager::OnOpenFile(wxCommandEvent& event) {
  * Shift to the previous forecast.
  */
 void EnsembleWeatherManager::OnPrevTimeClick(wxCommandEvent& event) {
+    PRINT_DEBUG("OnPrevTimeClick");
     if (!m_fcst.is_empty()) {
         m_time_index = (m_time_index - 1) % ((int) m_fcst.get_times().size());
         if (m_time_index < 0) {
@@ -167,6 +206,7 @@ void EnsembleWeatherManager::OnPrevTimeClick(wxCommandEvent& event) {
  * Shift to the next forecast.
  */
 void EnsembleWeatherManager::OnNextTimeClick(wxCommandEvent& event) {
+    PRINT_DEBUG("OnNextTimeclick");
     if (!m_fcst.is_empty()) {
         m_time_index = (m_time_index + 1) % ((int) m_fcst.get_times().size());
         Refresh();
