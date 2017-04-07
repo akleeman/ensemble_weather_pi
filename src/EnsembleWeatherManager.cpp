@@ -58,6 +58,10 @@ void EnsembleWeatherManager::LoadFile(std::string filename) {
     s.x = m_fcst.get_times().size() * 35;
     s.y = 350;
     SetSize(s);
+
+    m_lon_index = m_fcst.get_lons()->shape()[0] / 2;
+    m_lat_index = m_fcst.get_lats()->shape()[1] / 2;
+
     Refresh();
 }
 
