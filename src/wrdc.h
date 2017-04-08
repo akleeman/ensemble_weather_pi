@@ -2,7 +2,7 @@
  *
  * Project:  OpenCPN
  * Purpose:  Layer to use wxDC or opengl
- * Author:   Sean D'Epagnier
+ * Author:   Sean D'Epagnier (and Alex Kleeman)
  *
  ***************************************************************************
  *   Copyright (C) 2015 by Sean D'Epagnier                                 *

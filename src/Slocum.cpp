@@ -1,10 +1,75 @@
+/******************************************************************************
+ *
+ * Project:  OpenCPN
+ * Purpose:  Ensemble Weather Plugin
+ * Author:   Alex Kleeman
+ *
+ ***************************************************************************
+ *   Copyright (C) 2017 by Alex Kleeman                                 *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************
+ *
+ */
 #include "Slocum.h"
 
 
-/*
- * Expands a sequence of packed 32 bit (4 byte) integers.
- * The integer arrays are simply a zlib compressed
- */
+std::string zlib_decompress(const std::string& str)
+{
+    // z_stream is zlib's control structure
+    z_stream zs;
+    memset(&zs, 0, sizeof(zs));
+
+    if (inflateInit(&zs) != Z_OK)
+        throw(std::runtime_error("inflateInit failed while decompressing."));
+
+    zs.next_in = (Bytef*)str.data();
+    zs.avail_in = str.size();
+
+    int ret;
+    char outbuffer[32768];
+    std::string outstring;
+
+    // get the decompressed bytes blockwise using repeated calls to inflate
+    do {
+        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
+        zs.avail_out = sizeof(outbuffer);
+
+        ret = inflate(&zs, 0);
+
+        if (outstring.size() < zs.total_out) {
+            outstring.append(outbuffer,
+                             zs.total_out - outstring.size());
+        }
+
+    } while (ret == Z_OK);
+
+    inflateEnd(&zs);
+
+    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
+        std::ostringstream oss;
+        oss << "Exception during zlib decompression: (" << ret << ") "
+            << zs.msg;
+        throw(std::runtime_error(oss.str()));
+    }
+
+    return outstring;
+}
+
+
 std::vector<int> expand_small_ints(std::string compressed){
 
     // Decompress the payload which is zlib compressed
@@ -79,25 +144,28 @@ std::vector<double> expand_tiny_array(std::string compressed,
     for (uint i = 0; i < shape.size(); i++)
         size *= shape[i];
 
+    // We've assumed that the number of bins is less that 16 in
+    // which case only 4 bits are needed to store the bin numbers.
     int bits = 4;
+    assert(bins.size() <= 16);
     std::vector<int> bin_values = unpack_ints(compressed, bits, size);
+
 
     std::vector<double> data(bin_values.size());
 
-    int low, high;
+    // left and right hold the index of the left and right hand
+    // edges of the bin.
+    int left, right;
     for (uint i = 0; i < bin_values.size(); i++){
-        if (wrap) {
-            low = bin_values[i] - 1 % (int) bin_values.size();
-            high = bin_values[i];
-            if (bin_values[i] == 0) {
-                data[i] = wrap_value;
-            } else {
-                data[i] = 0.5 * (bins[low] + bins[high]);
-            }
+        // when dealing with arrays that wrap around we treat a bin
+        // number of zero as being the wrap value, all other bin
+        // values are as normal.
+        if (wrap & (bin_values[i] == 0)) {
+            data[i] = wrap_value;
         } else {
-            low = std::max(bin_values[i] - 1, 0);
-            high = std::min(bin_values[i], (int) bins.size() - 1);
-            data[i] = 0.5 * (bins[low] + bins[high]);
+            left = std::max(bin_values[i] - 1, 0);
+            right = std::min(bin_values[i], (int) bins.size() - 1);
+            data[i] = 0.5 * (bins[left] + bins[right]);
         }
     }
     return data;
@@ -142,79 +210,18 @@ std::vector<time_t> expand_time(std::string compressed){
 
 
 std::vector<int> expand_realization(std::string compressed){
+    // Realizations are stored as ranges which can be defined
+    // by a single integer.  Here we parse out the first (and only)
+    // integer.
     int16_t *ints = (int16_t*) compressed.c_str();
     PRINT_DEBUG("\t" << ints[0] << " realizations");
 
+    // Then build a vector with values 0, ... range - 1.
     std::vector<int> out;
     for (int i = 0; i < ints[0]; i++){
       out.push_back(i);
     }
     return out;
-}
-
-
-void expand_wind(std::string compressed, EnsembleForecast *fcst) {
-
-    std::vector<int> shape = fcst->shape();
-    assert(shape.size() == 4);
-
-    int n = compressed.size() / 2;
-
-    std::string compressed_speed = compressed.substr(0, n);
-    std::vector<double> speed = expand_tiny_array(compressed_speed,
-                                                  wind_bins, shape);
-    Tensor<double> wind_speed(shape, &speed);
-
-    fcst->add_variable(WIND_SPEED_ID, wind_speed);
-
-    std::string compressed_direction = compressed.substr(n, compressed.size());
-    std::vector<double> dir = expand_tiny_direction(compressed_direction, shape);
-    Tensor<double> direction(shape, &dir);
-
-    fcst->add_variable(WIND_DIRECTION_ID, direction);
-}
-
-
-/** Decompress an std::string using zlib and return the original data. */
-std::string zlib_decompress(const std::string& str)
-{
-    z_stream zs;                        // z_stream is zlib's control structure
-    memset(&zs, 0, sizeof(zs));
-
-    if (inflateInit(&zs) != Z_OK)
-        throw(std::runtime_error("inflateInit failed while decompressing."));
-
-    zs.next_in = (Bytef*)str.data();
-    zs.avail_in = str.size();
-
-    int ret;
-    char outbuffer[32768];
-    std::string outstring;
-
-    // get the decompressed bytes blockwise using repeated calls to inflate
-    do {
-        zs.next_out = reinterpret_cast<Bytef*>(outbuffer);
-        zs.avail_out = sizeof(outbuffer);
-
-        ret = inflate(&zs, 0);
-
-        if (outstring.size() < zs.total_out) {
-            outstring.append(outbuffer,
-                             zs.total_out - outstring.size());
-        }
-
-    } while (ret == Z_OK);
-
-    inflateEnd(&zs);
-
-    if (ret != Z_STREAM_END) {          // an error occurred that was not EOF
-        std::ostringstream oss;
-        oss << "Exception during zlib decompression: (" << ret << ") "
-            << zs.msg;
-        throw(std::runtime_error(oss.str()));
-    }
-
-    return outstring;
 }
 
 
@@ -238,10 +245,6 @@ compressed_variable_t extract_one_variable(std::string encoded_variables){
 }
 
 
-/*
- * Takes a string which may hold multiple variables and returns a map from variable
- * ID to a struct holding the (still compressed) data for that variable.
- */
 std::map<VariableID, compressed_variable_t> split_by_variable(std::string encoded_variables){
 
     int offset;
@@ -263,6 +266,28 @@ std::map<VariableID, compressed_variable_t> split_by_variable(std::string encode
                                                      encoded_variables.size() - offset);
     }
     return variables;
+}
+
+
+void expand_wind(std::string compressed, EnsembleForecast *fcst) {
+
+    std::vector<int> shape = fcst->shape();
+    assert(shape.size() == 4);
+
+    int n = compressed.size() / 2;
+
+    std::string compressed_speed = compressed.substr(0, n);
+    std::vector<double> speed = expand_tiny_array(compressed_speed,
+                                                  wind_bins, shape);
+    Tensor<double> wind_speed(shape, &speed);
+
+    fcst->add_variable(WIND_SPEED_ID, wind_speed);
+
+    std::string compressed_direction = compressed.substr(n, compressed.size());
+    std::vector<double> dir = expand_tiny_direction(compressed_direction, shape);
+    Tensor<double> direction(shape, &dir);
+
+    fcst->add_variable(WIND_DIRECTION_ID, direction);
 }
 
 

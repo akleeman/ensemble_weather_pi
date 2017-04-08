@@ -1,11 +1,26 @@
-Ensemble WEather Plugin for OpenCPN
+Ensemble Weather Plugin for OpenCPN
 ===========================================
 
-A tool for fetching and displaying ensemble forecasts, see www.ensembleweather.com
+A tool for fetching and displaying ensemble forecasts compressed using the algorithm
+used in the `slocum` project hosted at .
 
-Thanks to Sean D'Epagnier for his Weather Routing plugin which was used as a
-template for this plugin.  A lot of the plotting and installation tools were
-taken directly from that project.
+slocum is a service that provides weather forecasts using a unique, weather specific, compression algorithm.
+It includes an e-mail based forecast service similar to saildocs
+and zygrib <http://www.zygrib.org/> with a few notable differences:
+
+* Forecast files are 10x smaller. slocum doesn't waste a byte.  Each forecast is compressed using a weather specific compression algorithm that results in forecast files that are a fraction of the size of GRIB files.
+* Forecasts include probability. Weather forecasts aren't perfect.  You know that.  We know that.  By providing access to ensemble forecasts, slocum helps you understand how much you can trust a given forecast.
+
+See www.ensembleweather.com or github.com/akleeman/slocum for details.
+
+Thanks to Sean D'Epagnier for his Weather Routing plugin which was used as a template for this plugin.  A lot of the plotting and installation tools were taken directly from that project.
+
+Ensemble Forecasts
+==========================================
+
+Ensemble forecasting is commonly used to help understand how much you can trust a given weather forecast.  The concept is relatively simple, a numerical weather model (such as GFS) is run multiple times using slightly different inputs.  The result is not just one forecast, but an entire set (or ensemble) of forecasts.  You can then look at how much the forecasts agree to get a sense of how much you can trust them.
+
+One challenge with ensemble forecasts is that it's difficult to show multiple forecasts at the same time.  Doing so with a standard wind barb plot would get confusing.  Instead ``slocum`` uses a combination of probabilistic line plots (like the one above) and what we call a "wind circle" which represents an ensemble of wind speeds and directions at a single location and time.
 
 Compiling
 =========
@@ -14,7 +29,7 @@ Compiling
 
 Under windows, you must find the file "opencpn.lib" (Visual Studio) or "libopencpn.dll.a" (mingw) which is built in the build directory after compiling opencpn.  This file must be copied to the plugin directory.
 
-Build as normally:
+On Linux:
 
 * cd ..
 * cd build

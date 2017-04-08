@@ -33,7 +33,6 @@ SET(SRC_ENSEMBLE_WEATHER
             src/ensemble_weather_pi.cpp
             src/EnsembleWeatherUI.cpp
             src/EnsembleWeatherManager.cpp
-            src/GribRecord.cpp
             src/icons.cpp
             src/Matrix.cpp
             src/Tensor.cpp
