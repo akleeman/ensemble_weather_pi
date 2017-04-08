@@ -265,8 +265,6 @@ void ensemble_weather_pi::OnToolbarToolCallback(int id)
             writer.Write( jMsg, MsgString );
             SendPluginMessage( wxS("OCPN_DRAW_PI"), MsgString );
         }
-
-//        m_manager->Reset();
     }
 
     m_manager->Show(!m_manager->IsShown());

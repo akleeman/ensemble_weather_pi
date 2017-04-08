@@ -1,3 +1,30 @@
+/******************************************************************************
+ *
+ * Project:  OpenCPN
+ * Purpose:  Ensemble Weather Plugin
+ * Author:   Alex Kleeman
+ *
+ ***************************************************************************
+ *   Copyright (C) 2017 by Alex Kleeman                                 *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************
+ *
+ */
+
 #include "wx/wx.h"
 #include <cmath>
 #include <vector>
@@ -5,6 +32,11 @@
 
 #ifndef _COMMON_H_
 #define _COMMON_H_
+
+/*
+ * This module contains constants and definitions that are required across
+ * multiple other modules.
+ */
 
 enum VariableID {
   TIME_ID,
@@ -77,22 +109,5 @@ const wxColour wind_colors[13] = {
     wxColour(179, 13, 138),  // dark purple
     wxColour(0, 0, 0)        // black
 };
-
-//wxString pretty_time_delta(int seconds) {
-//
-//}
-//static wxString ReadableTimeDelta(int seconds)
-//{
-//    if(seconds < 60)
-//        return wxString::Format(_T("%02ds"), seconds);
-//
-//    if(seconds < 3600)
-//        return wxString::Format(_T("%02d.%02d"), seconds / 60, seconds % 60);
-//
-//    if(seconds < 86400)
-//        return wxString::Format(_T("%02d:%02d"), seconds / 3600, (seconds / 60) % 60);
-//
-//    return wxString::Format(_T("%dd %02dh"), seconds / 86400, seconds / 3600);
-//}
 
 #endif

@@ -1,7 +1,11 @@
 Ensemble WEather Plugin for OpenCPN
 ===========================================
 
-A tool for fetching and displaying ensemble forecasts, see ww.ensembleweather.com
+A tool for fetching and displaying ensemble forecasts, see www.ensembleweather.com
+
+Thanks to Sean D'Epagnier for his Weather Routing plugin which was used as a
+template for this plugin.  A lot of the plotting and installation tools were
+taken directly from that project.
 
 Compiling
 =========

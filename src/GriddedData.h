@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 #include "Common.h"
-#include "GribRecord.h"
 #include "VectorUtilities.h"
 #include "Matrix.h"
 #include "Tensor.h"
