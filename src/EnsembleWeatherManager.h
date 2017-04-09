@@ -53,6 +53,8 @@ class EnsembleWeatherManager : public EnsembleWeatherUI
 
     void LoadFile(std::string filename);
 
+    void OnClose(wxCloseEvent& event);
+
     void OnOpenFile(wxCommandEvent& event);
 
     void OnPrevTimeClick(wxCommandEvent& event);

@@ -46,7 +46,8 @@ void meshgrid(const std::vector<double> x, std::vector<double> y,
 
 // Takes a grid, which is defined by a longitude and latitude matrix,
 // and determines which indices in the grid (lon_index, lat_index)
-// correspond to the point closest to lon, lat.
+// correspond to the point closest to lon, lat.  The grid need not be
+// uniform.
 void nearest(Matrix<double> *lons, Matrix<double> *lats,
              const double lon, const double lat,
              int *lon_index, int *lat_index) {

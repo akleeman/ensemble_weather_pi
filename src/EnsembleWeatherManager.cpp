@@ -62,6 +62,8 @@ void EnsembleWeatherManager::LoadFile(std::string filename) {
     m_lon_index = m_fcst.get_lons()->shape()[0] / 2;
     m_lat_index = m_fcst.get_lats()->shape()[1] / 2;
 
+    m_forecast_file_text->SetLabel(filename);
+
     Refresh();
 }
 
@@ -70,7 +72,7 @@ void EnsembleWeatherManager::LoadFile(std::string filename) {
  * Here we render the gridded forecast overlay.
  */
 void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
-    PRINT_DEBUG("Render");
+    PRINT_DEBUG("Rendering indices, time: " << m_time_index << " lat: " << m_lat_index << " lon: " << m_lon_index);
     if (!m_fcst.is_empty()) {
         // If we're using GL we need to intialize before drawing and
         // everything get's computed in a buffer, then popped to the
@@ -113,6 +115,12 @@ void EnsembleWeatherManager::Render(wrDC &wrdc, PlugIn_ViewPort &vp){
             RequestRefresh(m_spot_plot.get_window());
         }
     }
+}
+
+
+void EnsembleWeatherManager::OnClose(wxCloseEvent& event) {
+    Hide();
+    Refresh();
 }
 
 

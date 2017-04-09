@@ -17,9 +17,8 @@
 #include <wx/settings.h>
 #include <wx/string.h>
 #include <wx/button.h>
-#include <wx/textctrl.h>
-#include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/sizer.h>
 #include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -35,12 +34,13 @@ class EnsembleWeatherUI : public wxFrame
 	protected:
 		wxPanel* m_SpotDisplay;
 		wxButton* m_open_button;
-		wxTextCtrl* m_forecast_file_text;
+		wxStaticText* m_forecast_file_text;
+		wxStaticText* m_time_text;
 		wxButton* m_prev_time_button;
 		wxButton* m_next_time_button;
-		wxStaticText* m_time_text;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
 		virtual void OnSpotDoubleClick( wxMouseEvent& event ) { event.Skip(); }
 		virtual void OnPaintSpot( wxPaintEvent& event ) { event.Skip(); }
 		virtual void OnOpenFile( wxCommandEvent& event ) { event.Skip(); }
